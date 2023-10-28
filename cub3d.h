@@ -23,15 +23,17 @@
 #define BUFFER_SIZE 1
 #define PI 3.1415926
 #define TWO_PI 6.28318530
-#define UP 126
-#define DOWN 125
+#define UP 13
+#define DOWN 1
 #define LEFT 123 
+#define RIGHT_A 2
+#define LEFT_D 0
 #define RIGHT 124
 #define FRAM 124
 #define US 0,5
 #define AS 1,5
-#define HEIGHT 21 * 50
-#define WIDTH 49 * 50
+#define HEIGHT 20 * 50
+#define WIDTH 40 * 50
 #define FOV_ANGLE 60 * (PI / 180)
 
 typedef struct	s_img {
