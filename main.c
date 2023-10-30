@@ -57,9 +57,9 @@ int	keyupdate2(int keycode, t_ray *ray)
 	else if (keycode == DOWN)
 		ray->p->playerwalkdirec = -1;
 	else if (keycode == UP)
-		ray->p->playerwalkdirec = +1;
+		ray->p->playerwalkdirec = 1;
 	else if (keycode == RIGHT)
-		ray->p->playertunrdirec = +1;
+		ray->p->playertunrdirec = 1;
 	else if (keycode == LEFT)
 		ray->p->playertunrdirec = -1;
 	else if (keycode == RIGHT_A)
@@ -101,22 +101,28 @@ int update(t_ray *ray)
 {
     float playerx;
     float playery;
+    float angel;
     ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
-        playerx = ray->p->px + cos(ray->p->playerrotatangl) * movestep;
-        playery = ray->p->py + sin(ray->p->playerrotatangl) * movestep;
-
-    if ( ray->flag == 1)
+    playerx = movestep;
+    playery = movestep;
+    if (ray->p->playerwalkdirec != 0)
     {
-        float movesho = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
-        playerx = ray->p->px + movesho;
-        playery = ray->p->py;
-        if (!checkmaphawall(ray, playerx, playery))
+        if (ray->flag)
         {
-            ray->p->px = playerx;
+            angel = ray->p->playerrotatangl - M_PI_2;
+            playerx *= cos(angel);
+            playery *= sin(angel);
         }
+        else
+        {
+            playerx *= cos(ray->p->playerrotatangl);
+            playery *= sin(ray->p->playerrotatangl);
+        }
+        playerx += ray->p->px;
+        playery += ray->p->py;
     }
-   else if (!checkmaphawall(ray,playerx,playery))
+   if (!checkmaphawall(ray,playerx,playery))
     {
         ray->p->px = playerx;
         ray->p->py = playery;
@@ -222,7 +228,7 @@ void draw_line(t_ray *ray)
             {
                     if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity) == 1)
                         my_mlx_pixel_put(ray,i,h,0x00ffff);
-                        //you can make you texture here for the wall
+                        // you can make you texture here for the wall
             }
             else
                 my_mlx_pixel_put(ray,i,h,0x7a7a7a);
@@ -295,6 +301,28 @@ int    draw(t_ray *ray)
     return (0);
 }
 
+
+			// if (m->map2[i][j] == 'E')
+			// 	m->e = 0;
+			// if (m->map2[i][j] == 'W')
+			// 	m->w = 180;
+			// if (m->map2[i][j] == 'S')
+			// 	m->s = 90;
+			// if (m->map2[i][j] == 'N')
+			// 	m->n = 270;
+void get_rot(char c,t_ray *ray)
+{
+    if (c == 'N')
+		ray->p->playerrotatangl = 270;
+    else if (c == 'S')
+		ray->p->playerrotatangl = 90;
+    else if (c == 'E')
+		ray->p->playerrotatangl = 0;
+    else if (c == 'W')
+		ray->p->playerrotatangl = 80;
+
+}
+
 void    player_position(t_ray *ray)
 {
     int i = 0;
@@ -304,12 +332,12 @@ void    player_position(t_ray *ray)
         j = 0;
         while (ray->map[i][j])
         {
-            if (ray->map[i][j] == 'N')
+            if (ray->map[i][j] == 'N' || ray->map[i][j] == 'S' || ray->map[i][j] == 'E' || ray->map[i][j] == 'W')
             {
+                get_rot(ray->map[i][j],ray);
                 ray->map[i][j] = '0';
                 ray->p->px = i * 50;
                 ray->p->py = j * 50;
-                ray->p->playerrotatangl = 60;
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
                 ray->p->walkspeed = 10;
