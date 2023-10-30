@@ -184,33 +184,32 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     (void)angel;
     while (1)
     {
-        y1 = y +  (i * sin(ray->hit->rayangle + ( PI / 180.0)));
-        x1 = x +  (i * cos(ray->hit->rayangle + ( PI / 180.0)));
+        x1 = x +  (i * cos(angel + ( PI / 180.0)));
+        y1 = y +  (i * sin(angel + ( PI / 180.0)));
         if (checkmaphawall(ray,x1,y1) == 1)
             break;
         i++;
     }
     ray->hit->wallhitx = x1;
     ray->hit->wallhity = y1;
-    // ray->hit->distance = i;
-    // ray->hit->rayangle = ray->p->playerrotatangl;
-    ray->hit->walldis = sqrt(pow(ray->hit->wallhitx - ray->p->px,2) + pow(ray->hit->wallhity - ray->p->py,2));
-    ray->hit->wallnewdis = ray->hit->walldis * cos(60 * (M_PI / 180));
-    ray->hit->wallhei = (50 * ray->height) / ray->hit->wallnewdis;
+    ray->hit->walldis = i;
+    ray->hit->wallnewdis = ray->hit->walldis * cos(ray->hit->angle_fov * (M_PI / 180));
+    ray->hit->wallhei = (50 * HEIGHT) / ray->hit->wallnewdis;
 }
 
 void draw_line(t_ray *ray)
 {
     int i = 0;
     int h = 0;
-    // ray->hit->angle_fov = -32;
+    ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl;
+        // ray->p->playerrotatangl += FOV_ANGLE / WIDTH;
     while (i < WIDTH)
     {
         // draw3d(ray);
         h = 0;
-        findwallhit(ray,ray->p->px + cos(ray->hit->rayangle) * (M_PI / 180),
-            ray->p->py + sin(ray->hit->rayangle) * (M_PI / 180),ray->hit->rayangle);
+        findwallhit(ray,ray->p->px + sin(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),
+            ray->p->py + cos(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
         while (h < HEIGHT && i < WIDTH)
         {
@@ -229,10 +228,11 @@ void draw_line(t_ray *ray)
 
             h++;
         }
-        ray->hit->rayangle += FOV_ANGLE / WIDTH;
+        ray->hit->rayangle += (float)1 / WIDTH;
+        // ray->p->playerrotatangl += 0.05;
         // ray->hit->angle_fov  += 0.05;
-        // if (ray->hit->angle_fov <= 32)
-        //     ray->hit->angle_fov += (float)1 / (WIDTH / 50);
+        if (ray->hit->angle_fov <= 32)
+            ray->hit->angle_fov += (float)1 / (WIDTH / 50);
         i++;
     }
 }
@@ -324,8 +324,8 @@ void    player_position(t_ray *ray)
                 ray->p->py = j * 50;
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
-                ray->p->walkspeed = 10;
-                ray->p->turnspeed = 10 * (PI / 180);
+                ray->p->walkspeed = 3;
+                ray->p->turnspeed = 3 * (PI / 180);
                 break;
             }
             j++;
