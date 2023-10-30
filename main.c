@@ -2,10 +2,11 @@
 #include "cub3d.h"
 #include <mlx.h>
 #include <signal.h>
+
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
 	char	*dst;
-    if (x <= 0 || x >= ray->width || y <= 0 || y >= ray->height)
+    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
             return ;
 	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
@@ -13,7 +14,7 @@ void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 
 int checkmaphawall(t_ray *ray, float x, float y)
 {
-    if (x <= 0 || x >= ray->height || y <= 0 || y >= ray->width)
+    if (x < 0 || x >= HEIGHT || y < 0 || y >= WIDTH)
         return 1;
     // int mapGridIndexX = floor(x / 50);
     // int mapGridIndexY = floor(y / 50);
@@ -179,8 +180,8 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     // float ddx = x - ray->p
     while (1)
     {
-        y1 = y +  (i * sin(angel + ( PI / 180.0)));
-        x1 = x +  (i * cos(angel + ( PI / 180.0)));
+        y1 = y +  (i * sin(ray->hit->rayangle + ( PI / 180.0)));
+        x1 = x +  (i * cos(ray->hit->rayangle + ( PI / 180.0)));
         if (checkmaphawall(ray,x1,y1) == 1)
             break;
         i++;
@@ -190,41 +191,29 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     // ray->hit->distance = i;
     // ray->hit->rayangle = ray->p->playerrotatangl;
     ray->hit->walldis = sqrt(pow(ray->hit->wallhitx - ray->p->px,2) + pow(ray->hit->wallhity - ray->p->py,2));
-    ray->hit->wallnewdis = ray->hit->walldis * cos(ray->hit->angle_fov * (M_PI / 180));
+    ray->hit->wallnewdis = ray->hit->walldis * cos(60 * (M_PI / 180));
     ray->hit->wallhei = (50 * ray->height) / ray->hit->wallnewdis;
 }
 
 void draw_line(t_ray *ray)
 {
-    // float num_rays = ray->width;
     int i = 0;
-    // while (i < num_rays)
-    // {
-
-    //     findwallhit(ray,ray->p->px,ray->p->py,rayangle);
-    //     draw_line_with_angle(ray,ray->hit->wallhity,ray->hit->wallhitx,ray->p->py,ray->p->px);
-    //     i++;
-    // }
     int h = 0;
-    i = 0;
-    ray->hit->angle_fov = -32;
+    // ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl;
-    // float rayangle = -32;
-        // ray->height = findbigleght(ray);
-    // printf("---width = %d---height = %d-----------\n",ray->width / 50,ray->height / 50);
-    while (i < ray->width)
+    while (i < WIDTH)
     {
         // draw3d(ray);
         h = 0;
-        findwallhit(ray,ray->p->px + cos(ray->hit->rayangle +  ray->hit->angle_fov ) * (M_PI / 180),
-            ray->p->py + sin(ray->hit->rayangle +  ray->hit->angle_fov ) * (M_PI / 180),ray->hit->rayangle);
+        findwallhit(ray,ray->p->px + cos(ray->hit->rayangle) * (M_PI / 180),
+            ray->p->py + sin(ray->hit->rayangle) * (M_PI / 180),ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
-        while (h < ray->height && i < ray->width)
+        while (h < HEIGHT && i < WIDTH)
         {
-            if (h < (ray->height - ray->hit->wallhei) / 2)
+            if (h < (HEIGHT - ray->hit->wallhei) / 2)
                     my_mlx_pixel_put(ray,i,h,0x0000ff);
                 //you can make you texture here for the floor
-            else if (h < ((ray->height - ray->hit->wallhei) / 2) + ray->hit->wallhei)
+            else if (h < ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
                     if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity) == 1)
                         my_mlx_pixel_put(ray,i,h,0x00ffff);
@@ -236,10 +225,10 @@ void draw_line(t_ray *ray)
 
             h++;
         }
-        ray->hit->rayangle += (float)1 / ray->width;
+        ray->hit->rayangle += FOV_ANGLE / WIDTH;
         // ray->hit->angle_fov  += 0.05;
-        if (ray->hit->angle_fov <= 32)
-            ray->hit->angle_fov += (float)1 / (ray->width / 50);
+        // if (ray->hit->angle_fov <= 32)
+        //     ray->hit->angle_fov += (float)1 / (WIDTH / 50);
         i++;
     }
 }
@@ -286,7 +275,7 @@ int    draw(t_ray *ray)
     int i = 0;
     int j = 0;
     update(ray);
-    ray->img->img = mlx_new_image(ray->mlx,ray->width,ray->height);
+    ray->img->img = mlx_new_image(ray->mlx,WIDTH,HEIGHT);
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
     draw_line(ray);
     if (ray->flagmap == 1)
@@ -301,15 +290,6 @@ int    draw(t_ray *ray)
     return (0);
 }
 
-
-			// if (m->map2[i][j] == 'E')
-			// 	m->e = 0;
-			// if (m->map2[i][j] == 'W')
-			// 	m->w = 180;
-			// if (m->map2[i][j] == 'S')
-			// 	m->s = 90;
-			// if (m->map2[i][j] == 'N')
-			// 	m->n = 270;
 void get_rot(char c,t_ray *ray)
 {
     if (c == 'N')
@@ -368,8 +348,6 @@ int main(int ac, char **av)
     {
         args = get_map(args);
         check_wall2(args);
-        // printf("\033[32m OK!\n");
-        // draw(args->copy);
         ray->map = args->copy;
         int i = 0;
         while (ray->map[i])
@@ -387,10 +365,8 @@ int main(int ac, char **av)
             p++;
         }
         ray->width = maxLength * 50;
-        // printf("---%d-----\n",ray->width);
-        // exit(0);
 	    ray->mlx = mlx_init(ray);
-	    ray->mlx_win = mlx_new_window(ray->mlx,ray->width,ray->height, "Cub3D");
+	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT, "Cub3D");
         player_position(ray);
         mlx_hook(ray->mlx_win,2,0L,keyupdate2,ray);
         mlx_hook(ray->mlx_win,3,0L,keyupdate1,ray);

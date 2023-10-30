@@ -32,8 +32,8 @@
 #define FRAM 124
 #define US 0,5
 #define AS 1,5
-#define HEIGHT 20 * 50
-#define WIDTH 40 * 50
+#define HEIGHT 1092
+#define WIDTH 1092
 #define FOV_ANGLE 60 * (PI / 180)
 
 typedef struct	s_img {
