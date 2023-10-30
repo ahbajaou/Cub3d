@@ -4,7 +4,7 @@ SO ./image/path_to_the_south_texture.xpm
 
 WE ./image/path_to_the_west_texture.xpm
 
-EA 4 ./image/path_to_the_east_texture.xpm
+EA  ./image/path_to_the_east_texture.xpm
 
 F    255,255,0
 C     255,25,255
