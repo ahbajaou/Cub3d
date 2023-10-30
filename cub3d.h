@@ -82,6 +82,7 @@ typedef struct t_ray
     float     wallhitboton;
     float     wallhitheight;
     float       distance;
+    int flagmap;
     int flag;
     int height;
     int width;
