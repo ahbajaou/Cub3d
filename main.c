@@ -50,11 +50,9 @@ void putpixel(t_ray *ray,float k,float p,int color)
 }
 int	keyupdate2(int keycode, t_ray *ray)
 {
-    // printf("------%d-----\n",keycode);
-	if (keycode == 53)
+
+	if (keycode == 65307)
 		exit(0);
-        //a == 2
-        //d == 53
 	else if (keycode == DOWN)
 		ray->p->playerwalkdirec = -1;
 	else if (keycode == UP)
@@ -75,7 +73,9 @@ int	keyupdate2(int keycode, t_ray *ray)
 	}
     else if (keycode == 46)
         ray->flagmap = 1;
-	return (0);
+    else
+	    return (0);
+    return 0;
 }
 
 int	keyupdate1(int keycode, t_ray *ray)
@@ -95,7 +95,9 @@ int	keyupdate1(int keycode, t_ray *ray)
 	}
     else if (keycode == 46)
         ray->flagmap = 0;
-	return (0);
+    else
+        return 0;
+    return 0;
 }
 
 int update(t_ray *ray)
@@ -103,6 +105,7 @@ int update(t_ray *ray)
     float playerx;
     float playery;
     float angel;
+    //  printf("------------------------------\n");
     ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
     playerx = movestep;
@@ -178,6 +181,7 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
 
 
     // float ddx = x - ray->p
+    (void)angel;
     while (1)
     {
         y1 = y +  (i * sin(ray->hit->rayangle + ( PI / 180.0)));
@@ -272,8 +276,8 @@ void     drawray(t_ray *ray)
 }
 int    draw(t_ray *ray)
 {
-    int i = 0;
-    int j = 0;
+    // int i = 0;
+    // int j = 0;
     update(ray);
     ray->img->img = mlx_new_image(ray->mlx,WIDTH,HEIGHT);
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
@@ -339,7 +343,7 @@ int main(int ac, char **av)
     args = malloc(sizeof(t_args));
     args->fd = open (av[1], O_RDONLY);
     t_ray *ray = NULL;
-
+    // printf("------------------------------\n");
     ray  = malloc(sizeof(t_ray));
     ray->img = malloc(sizeof(t_img));
     ray->p = malloc(sizeof(t_player));
@@ -368,8 +372,8 @@ int main(int ac, char **av)
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT, "Cub3D");
         player_position(ray);
-        mlx_hook(ray->mlx_win,2,0L,keyupdate2,ray);
-        mlx_hook(ray->mlx_win,3,0L,keyupdate1,ray);
+        mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
+        mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
         // mlx_hook(ray->mlx_win,3,0L,map,ray);
         mlx_loop_hook(ray->mlx,draw,ray);
 	    mlx_loop(ray->mlx);

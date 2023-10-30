@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/26 23:57:27 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/10/30 21:06:30 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@
 #define BUFFER_SIZE 1
 #define PI 3.1415926
 #define TWO_PI 6.28318530
-#define UP 13
-#define DOWN 1
-#define LEFT 123 
-#define RIGHT_A 2
-#define LEFT_D 0
-#define RIGHT 124
+#define UP 119
+#define DOWN 115
+#define RIGHT_A 100
+#define LEFT_D 97
+#define RIGHT  65363
+#define LEFT 65361
 #define FRAM 124
 #define US 0,5
 #define AS 1,5

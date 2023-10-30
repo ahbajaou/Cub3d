@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 09:26:46 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/27 01:42:31 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/10/30 19:15:04 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void check_face(t_args *args)
 
     j = 0;
     i = 0;
-    int n = 0;
+    // int n = 0;
             int count = 0;
     while(args->argv[j])
     {
@@ -55,7 +55,7 @@ int skip_space_2(t_args *args, int j, int i)
 {
     // int i = 0;
     // int j = 0;
-    int n = 0;
+    // int n = 0;
 
     // while(args->argv[j])
     // {
@@ -106,7 +106,7 @@ void get_deriction(t_args *args)
 {
     if (c == ' ')
         return (1);
-	if ((c >= '0' && c <= '9')
+	else if ((c >= '0' && c <= '9')
 		|| (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		return (1);
 	return (0);

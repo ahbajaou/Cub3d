@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   utls_parse.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 08:00:19 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/26 02:28:09 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/10/30 21:12:16 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	error(void)
-{
-	write(1, "\033[31m", 5);
-	write(1, "ERROR\n", 7);
+
+void error() {
+    if (write(1, "\033[31m", 5) == -1) { /* Check for errors and handle them if needed */ }
+    if (write(1, "ERROR\n", 6) == -1) { /* Check for errors and handle them if needed */ }
 	exit(1);
 }
 
@@ -90,9 +90,9 @@ int	count_lines(char **map)
 int	check_cub(char *file)
 {
 	int	len;
-	int	i;
+	// int	i;
 
-	i = 0;
+	// i = 0;
 	len = ft_strlen(file);
 	if (!file)
 		error();
