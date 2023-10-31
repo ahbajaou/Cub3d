@@ -6,20 +6,25 @@
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
 	char	*dst;
-    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
+            // printf("--------------------------\n");
+        // printf("----------y = %d--wdig = %d-------------\n",x,ray->width);
+        // printf("----------x = %d--hei = %d-------------\n",y,ray->height);
+    if (x <= 0 || x >= WIDTH || y <= 0 || y >= HEIGHT)
             return ;
 	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
 
-int checkmaphawall(t_ray *ray, float x, float y)
+int checkmaphawall(t_ray *ray, int x, int y,int size)
 {
-    if (x < 0 || x >= HEIGHT || y < 0 || y >= WIDTH)
+            // printf("----------x = %d--wdig = %d-------------\n",x,ray->width);
+        // printf("----------y = %d--hei = %d-------------\n",y,ray->height);
+    if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
         return 1;
     // int mapGridIndexX = floor(x / 50);
     // int mapGridIndexY = floor(y / 50);
-    int mapGridIndexX = (x / 50);
-    int mapGridIndexY = (y / 50);
+    int mapGridIndexX = (x / size);
+    int mapGridIndexY = (y / size);
     if (ray->map[mapGridIndexX][mapGridIndexY] == '1')
         return 1;
      return 0;
@@ -32,25 +37,8 @@ float distamce2point(float x1,float y1,float x2,float y2)
     return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
-void putpixel(t_ray *ray,float k,float p,int color)
-{
-    int i = 0;
-    int j = 0;
-
-    while (i < 50)
-    {
-        j = 0;
-        while (j < 50)
-        {
-            my_mlx_pixel_put(ray, k + j,p + i,color);
-            j++;
-        }
-        i++;
-    }
-}
 int	keyupdate2(int keycode, t_ray *ray)
 {
-
 	if (keycode == 65307)
 		exit(0);
 	else if (keycode == DOWN)
@@ -71,7 +59,7 @@ int	keyupdate2(int keycode, t_ray *ray)
 		ray->flag = 1;
 		ray->p->playerwalkdirec = 1;
 	}
-    else if (keycode == 46)
+    else if (keycode == 109)
         ray->flagmap = 1;
     else
 	    return (0);
@@ -93,7 +81,7 @@ int	keyupdate1(int keycode, t_ray *ray)
 		ray->p->playerwalkdirec = 0;
 		ray->flag = 0;
 	}
-    else if (keycode == 46)
+    else if (keycode == 109)
         ray->flagmap = 0;
     else
         return 0;
@@ -105,7 +93,6 @@ int update(t_ray *ray)
     float playerx;
     float playery;
     float angel;
-    //  printf("------------------------------\n");
     ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
     playerx = movestep;
@@ -126,7 +113,7 @@ int update(t_ray *ray)
         playerx += ray->p->px;
         playery += ray->p->py;
     }
-   if (!checkmaphawall(ray,playerx,playery))
+   if (!checkmaphawall(ray,(int)playerx + 1,(int)playery + 1,50))
     {
         ray->p->px = playerx;
         ray->p->py = playery;
@@ -137,19 +124,37 @@ int update(t_ray *ray)
 
 int    drawplayer(t_ray *ray)
 {
-    float i = -5;
-    float j = -5;
-    while (i <= 5)
+    float i = -1;
+    float j = -1;
+    while (i <= 2)
     {
-        j = -5;
-        while (j <= 5)
+        j = -1;
+        while (j <= 2)
         {
-            my_mlx_pixel_put(ray,(ray->p->py) + j,(ray->p->px) + i, 0xff0000);
+            my_mlx_pixel_put(ray,((ray->p->py / 50) * 10) + j,((ray->p->px / 50) * 10) + i, 0xff0000);
             j++;
         }
         i++;
     }
     return (0);
+}
+void putpixel(t_ray *ray,int x,int y,int color)
+{
+    int i = 0;
+    int j = 0;
+    // exit(0);
+    (void)color;
+    (void)ray;
+    while (i <= 10)
+    {
+        j = 0;
+        while (j <= 10)
+        {
+            my_mlx_pixel_put(ray,y + j,x + i,color);
+            j++;
+        }
+        i++;
+    }
 }
 void    drawwall(t_ray *ray)
 {
@@ -158,35 +163,34 @@ void    drawwall(t_ray *ray)
     int k = 0;
     int j = 0;
     int i = 0;
-    while (p < (ray->height))
+    while (p < (ray->height / 50) * 10)
     {
         j = 0;
         k = 0;
-        while (k < (ray->width))
+        while (k < (ray->width / 50) * 10)
         {
-            if (ray->map[i][j] == '1')
-                putpixel(ray,k,p,0xffffff);
+            if (ray->map[p / 10][k / 10] == '1')
+            {
+                putpixel(ray,p,k,0xffffff);
+            }
             j++;
-            k += 50;
+            k += 10;
         } 
-        p += 50;
+        p += 10;
         i++;
     }
 }
 void    findwallhit(t_ray *ray,float x,float y,float angel)
 {
-    float x1;
-    float y1;
-    float i = 0;
+    int x1;
+    int y1;
+    int i = 0;
 
-
-    // float ddx = x - ray->p
-    (void)angel;
     while (1)
     {
         x1 = x +  (i * cos(angel + ( PI / 180.0)));
         y1 = y +  (i * sin(angel + ( PI / 180.0)));
-        if (checkmaphawall(ray,x1,y1) == 1)
+        if (checkmaphawall(ray,x1,y1,50) == 1)
             break;
         i++;
     }
@@ -202,7 +206,7 @@ void draw_line(t_ray *ray)
     int i = 0;
     int h = 0;
     ray->hit->angle_fov = -32;
-    ray->hit->rayangle = ray->p->playerrotatangl;
+    ray->hit->rayangle = ray->p->playerrotatangl - 30 * (PI / 180);
         // ray->p->playerrotatangl += FOV_ANGLE / WIDTH;
     while (i < WIDTH)
     {
@@ -218,7 +222,7 @@ void draw_line(t_ray *ray)
                 //you can make you texture here for the floor
             else if (h < ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
-                    if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity) == 1)
+                    if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,50) == 1)
                         my_mlx_pixel_put(ray,i,h,0x00ffff);
                         // you can make you texture here for the wall
             }
@@ -236,13 +240,33 @@ void draw_line(t_ray *ray)
         i++;
     }
 }
+// void draw_line_with_distance(t_ray *ray, int x, int y, float angle, float length) {
+//     // Calculate the endpoint based on the angle and distance
+//     float end_x = x + length * cos(angle);
+//     float end_y = y + length * sin(angle);
+
+//     int dx = abs((int)end_x - (int)x);
+//     int dy = abs((int)end_y - (int)y);
+//     int steps = (dy < dx) ? dx : dy; // Use the larger of dx and dy for steps
+
+//     float x_increment = (end_x - x) / steps;
+//     float y_increment = (end_y - y) / steps;
+
+//     float current_x = x;
+//     float current_y = y;
+
+//     for (int i = 0; i < steps; i++) {
+//         my_mlx_pixel_put(ray, (int)current_x, (int)current_y, 0xff0000);
+//         current_x += x_increment;
+//         current_y += y_increment;
+//     }
+// }
 void draw_line_with_angle(t_ray *ray, float x, float y, float xx, float yy)
 {
 
     int end_x = xx; //+ length * cos(angle);
     int end_y = yy; //+ length * sin(angle);
 
-    // printf("---%f---%f---\n",xx,yy);
     int dx = abs(end_x - (int)x);
     int dy = abs(end_y - (int)y);
     int steps = (dy < dx) ? dy : dx;
@@ -260,16 +284,37 @@ void draw_line_with_angle(t_ray *ray, float x, float y, float xx, float yy)
         current_y += y_increment;
     }
 }
+
+
+void    wallraycast(t_ray *ray,int x,int y,float rayangel)
+{
+    int x1;
+    int y1;
+    int i = 0;
+
+
+    while (1)
+    {
+        x1 = x +  (i * cos(rayangel + (PI / 180.0)));
+        y1 = y +  (i * sin(rayangel + (PI / 180.0)));
+        if (checkmaphawall(ray,x1,y1,10) == 1)
+            break;
+        i++;
+    }
+    ray->hit->wallhitx = x1;
+    ray->hit->wallhity = y1;
+    ray->hit->distance = i;
+}
 void     drawray(t_ray *ray)
 {
-    int num_rays = ray->width;
-    float rayangle = ray->p->playerrotatangl;
+    int num_rays = (ray->width);
+    float rayangle = ray->p->playerrotatangl - 30 * (PI / 180);
     int i = 0;
     while (i < num_rays)
     {
 
-        findwallhit(ray,(ray->p->px),(ray->p->py),rayangle);
-        draw_line_with_angle(ray,ray->hit->wallhity ,ray->hit->wallhitx ,(ray->p->py ),(ray->p->px));
+        wallraycast(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 50,rayangle);
+        draw_line_with_angle(ray,(ray->p->py),(ray->p->px),(ray->hit->wallhity),ray->hit->wallhitx);
         rayangle += FOV_ANGLE / num_rays;
         i++;
     }
@@ -278,15 +323,15 @@ int    draw(t_ray *ray)
 {
     // int i = 0;
     // int j = 0;
-    update(ray);
     ray->img->img = mlx_new_image(ray->mlx,WIDTH,HEIGHT);
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
+    update(ray);
     draw_line(ray);
     if (ray->flagmap == 1)
     {
         drawplayer(ray);
         drawwall(ray);
-        drawray(ray);
+        // drawray(ray);
     }
     // draw3d(ray);
     mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
@@ -369,8 +414,9 @@ int main(int ac, char **av)
             p++;
         }
         ray->width = maxLength * 50;
+        // printf("--hei = %d----wid = %d----\n",ray->height,ray->width);
 	    ray->mlx = mlx_init(ray);
-	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT, "Cub3D");
+	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
         player_position(ray);
         mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
         mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
