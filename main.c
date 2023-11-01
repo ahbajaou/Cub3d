@@ -6,7 +6,7 @@
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
 	char	*dst;
-    if (x <= 0 || x >= WIDTH || y <= 0 || y >= HEIGHT)
+    if (x <= 0 || x >= ray->width || y <= 0 || y >= ray->height)
             return ;
 	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
@@ -14,7 +14,7 @@ void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 
 int checkmaphawall(t_ray *ray, int x, int y,int size)
 {
-    if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
+    if (x <= 0 || x >= ray->height || y <= 0 || y >= ray->width)
         return 1;
     int x1 = (x / size);
     int y1 = (y / size);
@@ -173,7 +173,7 @@ void    drawwall(t_ray *ray)
             if (ray->map[p / 10][k / 10] == 0)
                  break ;
             // printf("--[%d]--\n",ray->map[p / 10][k / 10]);
-            if (checkmaphawall(ray,p,k,10) == 1)
+            if (ray->map[p / 10][k / 10] == '1')
             {
                 putpixel(ray,p,k,0xffffff);
             }
@@ -226,7 +226,11 @@ void draw_line(t_ray *ray)
             else if (h <= ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
                     if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,50) == 1)
-                        my_mlx_pixel_put(ray,i,h,0x00ffff);
+                        my_mlx_pixel_put(ray,i,h,0xEF1DF2);
+                    if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,50) == 1)
+                        my_mlx_pixel_put(ray,i,h,0xFFB833);
+                    if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,50) == 1)
+                        my_mlx_pixel_put(ray,i,h,0x8EF21D);
                         // you can make you texture here for the wall
             }
             else
@@ -350,13 +354,13 @@ int    draw(t_ray *ray)
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
     update(ray);
     draw_line(ray);
-    if (ray->flagmap == 1)
-    {
+    // if (ray->flagmap == 1)
+    // {
         drawplayer(ray);
         drawwall(ray);
         // exit(0);
         drawray(ray);
-    }
+    // }
     // draw3d(ray);
     mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
     mlx_destroy_image(ray->mlx,ray->img->img);
