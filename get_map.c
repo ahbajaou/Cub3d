@@ -6,7 +6,7 @@
 /*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 09:26:46 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/30 19:15:04 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/01 03:40:01 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,15 +196,15 @@ void skip_space(t_args *args)
                     else
                     error();
                 }
-            if(args->copy[j][i] == ' ')
-            {
-                skip_norm_n(args, j, i, 'N');
-                skip_norm_n(args, j, i, 'W');
-                skip_norm_n(args, j, i, 'E');
-                skip_norm_n(args, j, i, 'S');
-                // else 
-                i++;
-            }
+            // if(args->copy[j][i] == ' ')
+            // {
+            //     skip_norm_n(args, j, i, 'N');
+            //     skip_norm_n(args, j, i, 'W');
+            //     skip_norm_n(args, j, i, 'E');
+            //     skip_norm_n(args, j, i, 'S');
+            //     // else 
+            //     i++;
+            // }
             i++;
         }
         j++;

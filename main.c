@@ -18,7 +18,8 @@ int checkmaphawall(t_ray *ray, int x, int y,int size)
         return 1;
     int x1 = (x / size);
     int y1 = (y / size);
-    if (ray->map[x1][y1] == '1')
+    // printf("---[%c]---\n",ray->map[x1][y1]);
+    if (ray->map[x1][y1] == '1' || ray->map[x1][y1] == ' ' || ray->map[x1][y1] == '\0' || ray->map[x1][y1] == '\n' )
         return 1;
     return 0;
     
@@ -91,6 +92,9 @@ int update(t_ray *ray)
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
         playerx = movestep;
         playery = movestep;
+    // printf("-----angel = %f-------turn = %f----------\n",ray->p->playerrotatangl,ray->p->playertunrdirec);
+    // printf("-----turn = %f-------walk = %f----------\n",ray->p->playerwalkdirec,ray->p->walkspeed);
+    // printf("-----playerx = %f-------playery = %f----------\n", playerx , playery);
     if (ray->p->playerwalkdirec != 0)
     {
         if (ray->flag)
@@ -107,11 +111,15 @@ int update(t_ray *ray)
     }
     playerx += ray->p->px;
     playery += ray->p->py;
-   if (!checkmaphawall(ray,(int)playerx,(int)playery,50))
-    {
-        ray->p->px = playerx;
-        ray->p->py = playery;
-    }
+//    if (!checkmaphawall(ray,(int)playerx,(int)playery,50))
+//     {
+//         printf("-----------------------\n");
+        if (ray->map[(int)playerx / 50][(int)playery / 50] != '1')
+        {
+            ray->p->px = playerx;
+            ray->p->py = playery;
+        }
+    // }
     return 0;
 }
 
@@ -164,6 +172,7 @@ void    drawwall(t_ray *ray)
         {
             if (ray->map[p / 10][k / 10] == 0)
                  break ;
+            // printf("--[%d]--\n",ray->map[p / 10][k / 10]);
             if (checkmaphawall(ray,p,k,10) == 1)
             {
                 putpixel(ray,p,k,0xffffff);
@@ -191,7 +200,7 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     ray->hit->wallhitx = x1;
     ray->hit->wallhity = y1;
     ray->hit->walldis = i;
-    ray->hit->wallnewdis = ray->hit->walldis * cos(ray->hit->angle_fov * (M_PI / 180));
+    ray->hit->wallnewdis = ray->hit->walldis * cos(ray->hit->angle_fov * (PI / 180));
     ray->hit->wallhei = (50 * HEIGHT) / ray->hit->wallnewdis;
 }
 
@@ -206,8 +215,8 @@ void draw_line(t_ray *ray)
     {
         // draw3d(ray);
         h = 0;
-        findwallhit(ray,ray->p->px + sin(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),
-            ray->p->py + cos(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),ray->hit->rayangle);
+        findwallhit(ray,ray->p->px + sin(ray->hit->rayangle + ray->hit->angle_fov) * (PI / 180),
+            ray->p->py + cos(ray->hit->rayangle + ray->hit->angle_fov) * (PI / 180),ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
         while (h <= HEIGHT && i <= WIDTH)
         {
@@ -432,14 +441,13 @@ int main(int ac, char **av)
                 maxLength = px;
             p++;
         }
-        ray->width = maxLength * 50;
-        printf("-----------%d---------\n",ray->width / 50);
+        ray->width = maxLength * 50;;
         // printf("--hei = %d----wid = %d----\n",ray->height,ray->width);
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
         player_position(ray);
-        mlx_hook(ray->mlx_win,2,0,keyupdate2,ray);
-        mlx_hook(ray->mlx_win,3,0,keyupdate1,ray);
+        mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
+        mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
         mlx_hook(ray->mlx_win,17,0,mouse,ray);
         // mlx_hook(ray->mlx_win,3,0L,map,ray);
         mlx_loop_hook(ray->mlx,draw,ray);

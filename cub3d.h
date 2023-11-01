@@ -6,7 +6,7 @@
 /*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/01 02:41:16 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/01 06:35:40 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 #define US 0,5
 #define AS 1,5
 #define HEIGHT 1092
-#define WIDTH 1092
+#define WIDTH 1800
 #define FOV_ANGLE 60 * (PI / 180)
 
 typedef struct	s_img {
