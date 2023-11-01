@@ -17,7 +17,7 @@ void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 
 int checkmaphawall(t_ray *ray, int x, int y,int size)
 {
-            // printf("----------x = %d--wdig = %d-------------\n",x,ray->width);
+        //     printf("----------x = %d--wdig = %d-------------\n",x,ray->width);
         // printf("----------y = %d--hei = %d-------------\n",y,ray->height);
     if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
         return 1;
@@ -25,9 +25,11 @@ int checkmaphawall(t_ray *ray, int x, int y,int size)
     // int mapGridIndexY = floor(y / 50);
     int mapGridIndexX = (x / size);
     int mapGridIndexY = (y / size);
+    // printf("-------------[--%d--]----------\n",mapGridIndexX);
+    // printf("-------------[%d]----------\n",ray->map[mapGridIndexX][mapGridIndexY]);
     if (ray->map[mapGridIndexX][mapGridIndexY] == '1')
         return 1;
-     return 0;
+    return 0;
     
 }
 
@@ -87,6 +89,52 @@ int	keyupdate1(int keycode, t_ray *ray)
         return 0;
     return 0;
 }
+// void	update_player_pos(t_cubscene *cubscene, int *newx, int *newy)
+// {
+// 	newx[0] += cubscene->player->x;
+// 	newy[0] += cubscene->player->y;
+// 	newx[1] = newx[0] + cubscene->player->radius;
+// 	newx[2] = newx[0] - cubscene->player->radius;
+// 	newy[1] = newy[0] + cubscene->player->radius;
+// 	newy[2] = newy[0] - cubscene->player->radius;
+// 	if (!has_wall_at(cubscene, newx[1], newy[1])
+// 		&& !has_wall_at(cubscene, newx[2], newy[2])
+// 		&& !has_wall_at(cubscene, newx[1], newy[2])
+// 		&& !has_wall_at(cubscene, newx[2], newy[1]))
+// 	{
+// 		cubscene->player->x = newx[0];
+// 		cubscene->player->y = newy[0];
+// 	}
+// }
+
+// void	update_player(t_cubscene *cubscene)
+// {
+// 	int		movesptep;
+// 	int		newplayerx[3];
+// 	int		newplayery[3];
+// 	double	angle;
+
+// 	cubscene->player->rotation_angle
+// 		+= cubscene->player->turn_direction * cubscene->player->rotationspeed;
+// 	movesptep = cubscene->player->walk_direction * cubscene->player->movespeed;
+// 	newplayerx[0] = movesptep;
+// 	newplayery[0] = movesptep;
+// 	if (cubscene->player->walk_direction != 0)
+// 	{
+// 		if (cubscene->player->flag)
+// 		{
+// 			angle = cubscene->player->rotation_angle - M_PI_2;
+// 			newplayerx[0] *= cos(angle);
+// 			newplayery[0] *= sin(angle);
+// 		}
+// 		else
+// 		{
+// 			newplayerx[0] *= cos(cubscene->player->rotation_angle);
+// 			newplayery[0] *= sin(cubscene->player->rotation_angle);
+// 		}
+// 	}
+// 	update_player_pos(cubscene, newplayerx, newplayery);
+// }
 
 int update(t_ray *ray)
 {
@@ -95,8 +143,8 @@ int update(t_ray *ray)
     float angel;
     ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
-    playerx = movestep;
-    playery = movestep;
+        playerx = movestep;
+        playery = movestep;
     if (ray->p->playerwalkdirec != 0)
     {
         if (ray->flag)
@@ -110,10 +158,10 @@ int update(t_ray *ray)
             playerx *= cos(ray->p->playerrotatangl);
             playery *= sin(ray->p->playerrotatangl);
         }
-        playerx += ray->p->px;
-        playery += ray->p->py;
     }
-   if (!checkmaphawall(ray,(int)playerx + 1,(int)playery + 1,50))
+    playerx += ray->p->px;
+    playery += ray->p->py;
+   if (!checkmaphawall(ray,(int)playerx,(int)playery,50))
     {
         ray->p->px = playerx;
         ray->p->py = playery;
@@ -145,10 +193,10 @@ void putpixel(t_ray *ray,int x,int y,int color)
     // exit(0);
     (void)color;
     (void)ray;
-    while (i <= 10)
+    while (i < 9)
     {
         j = 0;
-        while (j <= 10)
+        while (j < 9)
         {
             my_mlx_pixel_put(ray,y + j,x + i,color);
             j++;
@@ -161,23 +209,23 @@ void    drawwall(t_ray *ray)
 
     int p = 0;
     int k = 0;
-    int j = 0;
-    int i = 0;
-    while (p < (ray->height / 50) * 10)
+    int j = (ray->height / 50) * 10;
+    int i = (ray->width / 50) * 10;
+    while (p < j)
     {
-        j = 0;
         k = 0;
-        while (k < (ray->width / 50) * 10)
+        while (k < i)
         {
-            if (ray->map[p / 10][k / 10] == '1')
+            if (ray->map[p / 10][k / 10] == 0)
+                 break ;
+            if (checkmaphawall(ray,p,k,10) == 1)
             {
                 putpixel(ray,p,k,0xffffff);
             }
-            j++;
+            // j++;
             k += 10;
         } 
         p += 10;
-        i++;
     }
 }
 void    findwallhit(t_ray *ray,float x,float y,float angel)
@@ -208,19 +256,19 @@ void draw_line(t_ray *ray)
     ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl - 30 * (PI / 180);
         // ray->p->playerrotatangl += FOV_ANGLE / WIDTH;
-    while (i < WIDTH)
+    while (i <= WIDTH)
     {
         // draw3d(ray);
         h = 0;
         findwallhit(ray,ray->p->px + sin(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),
             ray->p->py + cos(ray->hit->rayangle + ray->hit->angle_fov) * (M_PI / 180),ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
-        while (h < HEIGHT && i < WIDTH)
+        while (h <= HEIGHT && i <= WIDTH)
         {
-            if (h < (HEIGHT - ray->hit->wallhei) / 2)
+            if (h <= (HEIGHT - ray->hit->wallhei) / 2)
                     my_mlx_pixel_put(ray,i,h,0x0000ff);
                 //you can make you texture here for the floor
-            else if (h < ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
+            else if (h <= ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
                     if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,50) == 1)
                         my_mlx_pixel_put(ray,i,h,0x00ffff);
@@ -286,6 +334,25 @@ void draw_line_with_angle(t_ray *ray, float x, float y, float xx, float yy)
 }
 
 
+// void draw_line_with_distance(t_ray *ray, float x, float y, float distance) {
+//     // Calculate the endpoint based on the angle and distance
+//     float end_x = x + distance;
+//     float end_y = y;
+
+//     // Determine the number of steps based on the distance
+//     int num_steps = (int)distance;
+
+//     for (int step = 0; step <= num_steps; step++) {
+//         // Calculate the current position
+//         float current_x = x + (end_x - x) * step / num_steps;
+//         float current_y = y + (end_y - y) * step / num_steps;
+
+//         // Draw a pixel at the current position
+//         my_mlx_pixel_put(ray, (int)current_x, (int)current_y, 0xff0000);
+//     }
+// }
+
+
 void    wallraycast(t_ray *ray,int x,int y,float rayangel)
 {
     int x1;
@@ -297,7 +364,7 @@ void    wallraycast(t_ray *ray,int x,int y,float rayangel)
     {
         x1 = x +  (i * cos(rayangel + (PI / 180.0)));
         y1 = y +  (i * sin(rayangel + (PI / 180.0)));
-        if (checkmaphawall(ray,x1,y1,10) == 1)
+        if (checkmaphawall(ray,x1 + 1,y1 + 1,10) == 1)
             break;
         i++;
     }
@@ -313,8 +380,9 @@ void     drawray(t_ray *ray)
     while (i < num_rays)
     {
 
-        wallraycast(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 50,rayangle);
-        draw_line_with_angle(ray,(ray->p->py),(ray->p->px),(ray->hit->wallhity),ray->hit->wallhitx);
+        wallraycast(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 10,rayangle);
+        draw_line_with_angle(ray,(ray->p->py / 50) * 10,(ray->p->px / 50) * 10,(ray->hit->wallhity),ray->hit->wallhitx);
+    //    draw_line_with_distance(ray,((ray->p->py / 50) * 10) + cos(ray->p->playerrotatangl),((ray->p->px / 50) * 10) + sin(ray->p->playerrotatangl),50);
         rayangle += FOV_ANGLE / num_rays;
         i++;
     }
@@ -331,7 +399,8 @@ int    draw(t_ray *ray)
     {
         drawplayer(ray);
         drawwall(ray);
-        // drawray(ray);
+        // exit(0);
+        drawray(ray);
     }
     // draw3d(ray);
     mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
@@ -414,6 +483,7 @@ int main(int ac, char **av)
             p++;
         }
         ray->width = maxLength * 50;
+        printf("-----------%d---------\n",ray->width / 50);
         // printf("--hei = %d----wid = %d----\n",ray->height,ray->width);
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");

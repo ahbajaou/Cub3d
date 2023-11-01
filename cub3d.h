@@ -6,7 +6,7 @@
 /*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/30 21:06:30 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/01 02:41:16 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "get_next_line.h"
 #define BUFFER_SIZE 1
 #define PI 3.1415926
+#define M_PI_2 1.57079632679489661923
 #define TWO_PI 6.28318530
 #define UP 119
 #define DOWN 115
