@@ -6,9 +6,6 @@
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
 	char	*dst;
-            // printf("--------------------------\n");
-        // printf("----------y = %d--wdig = %d-------------\n",x,ray->width);
-        // printf("----------x = %d--hei = %d-------------\n",y,ray->height);
     if (x <= 0 || x >= WIDTH || y <= 0 || y >= HEIGHT)
             return ;
 	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
@@ -17,17 +14,11 @@ void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 
 int checkmaphawall(t_ray *ray, int x, int y,int size)
 {
-        //     printf("----------x = %d--wdig = %d-------------\n",x,ray->width);
-        // printf("----------y = %d--hei = %d-------------\n",y,ray->height);
     if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
         return 1;
-    // int mapGridIndexX = floor(x / 50);
-    // int mapGridIndexY = floor(y / 50);
-    int mapGridIndexX = (x / size);
-    int mapGridIndexY = (y / size);
-    // printf("-------------[--%d--]----------\n",mapGridIndexX);
-    // printf("-------------[%d]----------\n",ray->map[mapGridIndexX][mapGridIndexY]);
-    if (ray->map[mapGridIndexX][mapGridIndexY] == '1')
+    int x1 = (x / size);
+    int y1 = (y / size);
+    if (ray->map[x1][y1] == '1')
         return 1;
     return 0;
     
@@ -89,52 +80,7 @@ int	keyupdate1(int keycode, t_ray *ray)
         return 0;
     return 0;
 }
-// void	update_player_pos(t_cubscene *cubscene, int *newx, int *newy)
-// {
-// 	newx[0] += cubscene->player->x;
-// 	newy[0] += cubscene->player->y;
-// 	newx[1] = newx[0] + cubscene->player->radius;
-// 	newx[2] = newx[0] - cubscene->player->radius;
-// 	newy[1] = newy[0] + cubscene->player->radius;
-// 	newy[2] = newy[0] - cubscene->player->radius;
-// 	if (!has_wall_at(cubscene, newx[1], newy[1])
-// 		&& !has_wall_at(cubscene, newx[2], newy[2])
-// 		&& !has_wall_at(cubscene, newx[1], newy[2])
-// 		&& !has_wall_at(cubscene, newx[2], newy[1]))
-// 	{
-// 		cubscene->player->x = newx[0];
-// 		cubscene->player->y = newy[0];
-// 	}
-// }
 
-// void	update_player(t_cubscene *cubscene)
-// {
-// 	int		movesptep;
-// 	int		newplayerx[3];
-// 	int		newplayery[3];
-// 	double	angle;
-
-// 	cubscene->player->rotation_angle
-// 		+= cubscene->player->turn_direction * cubscene->player->rotationspeed;
-// 	movesptep = cubscene->player->walk_direction * cubscene->player->movespeed;
-// 	newplayerx[0] = movesptep;
-// 	newplayery[0] = movesptep;
-// 	if (cubscene->player->walk_direction != 0)
-// 	{
-// 		if (cubscene->player->flag)
-// 		{
-// 			angle = cubscene->player->rotation_angle - M_PI_2;
-// 			newplayerx[0] *= cos(angle);
-// 			newplayery[0] *= sin(angle);
-// 		}
-// 		else
-// 		{
-// 			newplayerx[0] *= cos(cubscene->player->rotation_angle);
-// 			newplayery[0] *= sin(cubscene->player->rotation_angle);
-// 		}
-// 	}
-// 	update_player_pos(cubscene, newplayerx, newplayery);
-// }
 
 int update(t_ray *ray)
 {
@@ -449,7 +395,11 @@ void    player_position(t_ray *ray)
 
 }
 
-
+int    mouse(void)
+{
+    exit(0);
+    return 0;
+}
 int main(int ac, char **av)
 {
     t_args *args;
@@ -488,8 +438,9 @@ int main(int ac, char **av)
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
         player_position(ray);
-        mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
-        mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
+        mlx_hook(ray->mlx_win,2,0,keyupdate2,ray);
+        mlx_hook(ray->mlx_win,3,0,keyupdate1,ray);
+        mlx_hook(ray->mlx_win,17,0,mouse,ray);
         // mlx_hook(ray->mlx_win,3,0L,map,ray);
         mlx_loop_hook(ray->mlx,draw,ray);
 	    mlx_loop(ray->mlx);
