@@ -1,7 +1,6 @@
 
 #include "cub3d.h"
-#include <mlx.h>
-#include <signal.h>
+
 
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
@@ -18,7 +17,6 @@ int checkmaphawall(t_ray *ray, int x, int y,int size)
         return 1;
     int x1 = (x / size);
     int y1 = (y / size);
-    // printf("---[%c]---\n",ray->map[x1][y1]);
     if (ray->map[x1][y1] == '1' || ray->map[x1][y1] == ' ' || ray->map[x1][y1] == '\0' || ray->map[x1][y1] == '\n' )
         return 1;
     return 0;
@@ -92,9 +90,6 @@ int update(t_ray *ray)
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
         playerx = movestep;
         playery = movestep;
-    // printf("-----angel = %f-------turn = %f----------\n",ray->p->playerrotatangl,ray->p->playertunrdirec);
-    // printf("-----turn = %f-------walk = %f----------\n",ray->p->playerwalkdirec,ray->p->walkspeed);
-    // printf("-----playerx = %f-------playery = %f----------\n", playerx , playery);
     if (ray->p->playerwalkdirec != 0)
     {
         if (ray->flag)
@@ -111,15 +106,11 @@ int update(t_ray *ray)
     }
     playerx += ray->p->px;
     playery += ray->p->py;
-//    if (!checkmaphawall(ray,(int)playerx,(int)playery,50))
-//     {
-//         printf("-----------------------\n");
         if (ray->map[(int)playerx / 50][(int)playery / 50] != '1')
         {
             ray->p->px = playerx;
             ray->p->py = playery;
         }
-    // }
     return 0;
 }
 
@@ -173,7 +164,7 @@ void    drawwall(t_ray *ray)
             if (ray->map[p / 10][k / 10] == 0)
                  break ;
             // printf("--[%d]--\n",ray->map[p / 10][k / 10]);
-            if (ray->map[p / 10][k / 10] == '1')
+            if (ray->map[p / 10][k / 10] == '1' || ray->map[p / 10][k / 10] == ' ' || ray->map[p / 10][k / 10] == '\0' || ray->map[p / 10][k / 10] == '\n')
             {
                 putpixel(ray,p,k,0xffffff);
             }
@@ -199,8 +190,8 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     }
     ray->hit->wallhitx = x1;
     ray->hit->wallhity = y1;
-    ray->hit->walldis = i;
-    ray->hit->wallnewdis = ray->hit->walldis * cos(ray->hit->angle_fov * (PI / 180));
+    ray->hit->walldis = distamce2point(x1,y1,x,y);
+    ray->hit->wallnewdis = ray->hit->walldis * cos(angel - ray->p->playerrotatangl);
     ray->hit->wallhei = (50 * HEIGHT) / ray->hit->wallnewdis;
 }
 
@@ -209,19 +200,19 @@ void draw_line(t_ray *ray)
     int i = 0;
     int h = 0;
     ray->hit->angle_fov = -32;
-    ray->hit->rayangle = ray->p->playerrotatangl - 30 * (PI / 180);
+    ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
         // ray->p->playerrotatangl += FOV_ANGLE / WIDTH;
     while (i <= WIDTH)
     {
         // draw3d(ray);
-        h = 0;
-        findwallhit(ray,ray->p->px + sin(ray->hit->rayangle + ray->hit->angle_fov) * (PI / 180),
-            ray->p->py + cos(ray->hit->rayangle + ray->hit->angle_fov) * (PI / 180),ray->hit->rayangle);
+        findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
+            ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
+        h = 0;
         while (h <= HEIGHT && i <= WIDTH)
         {
             if (h <= (HEIGHT - ray->hit->wallhei) / 2)
-                    my_mlx_pixel_put(ray,i,h,0x0000ff);
+                    my_mlx_pixel_put(ray,i,h,0x1DE8F2);
                 //you can make you texture here for the floor
             else if (h <= ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
@@ -234,7 +225,7 @@ void draw_line(t_ray *ray)
                         // you can make you texture here for the wall
             }
             else
-                my_mlx_pixel_put(ray,i,h,0x7a7a7a);
+                my_mlx_pixel_put(ray,i,h,0xAB9C61);
                 // you can make you texture here for the sky
 
             h++;
@@ -323,7 +314,7 @@ void    wallraycast(t_ray *ray,int x,int y,float rayangel)
     {
         x1 = x +  (i * cos(rayangel + (PI / 180.0)));
         y1 = y +  (i * sin(rayangel + (PI / 180.0)));
-        if (checkmaphawall(ray,x1 + 1,y1 + 1,10) == 1)
+        if (checkmaphawall(ray,x1,y1,10) == 1)
             break;
         i++;
     }
@@ -354,13 +345,13 @@ int    draw(t_ray *ray)
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
     update(ray);
     draw_line(ray);
-    // if (ray->flagmap == 1)
-    // {
+    if (ray->flagmap == 1)
+    {
         drawplayer(ray);
         drawwall(ray);
         // exit(0);
         drawray(ray);
-    // }
+    }
     // draw3d(ray);
     mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
     mlx_destroy_image(ray->mlx,ray->img->img);
