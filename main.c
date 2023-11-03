@@ -193,6 +193,35 @@ int	get_clr_rgb(int r, int g, int b)
 	return (r * 256 * 256 + g * 256 + b);
 }
 
+// int	get_color_image(t_map *m, int x, int y, int direction)
+// {
+// 	char	*dst;
+
+// 	if (direction == 1)
+// 		dst = m->image[0].addr + (y * m->image[0].line_length + x 
+// 			* (m->image[0].bits_per_pixel / 8));
+// 	if (direction == 2)
+// 		dst = m->image[1].addr + (y * m->image[1].line_length + x
+// 			* (m->image[1].bits_per_pixel / 8));
+// 	if (direction == 3)
+// 		dst = m->image[2].addr + (y * m->image[2].line_length + x
+// 			* (m->image[2].bits_per_pixel / 8));
+// 	if (direction == 4)
+// 		dst = m->image[3].addr + (y * m->image[3].line_length + x 
+// 			* (m->image[3].bits_per_pixel / 8));
+// 	return (*(int *)dst);
+// }
+// void	draw_wall(t_map *m)
+// {
+// 	if (m->dda->direction == 1 || m->dda->direction == 2)
+// 		m->dda->flag = fmod(m->dda->y / 64, 1);
+// 	else if (m->dda->direction == 3 || m->dda->direction == 4)
+// 		m->dda->flag = fmod(m->dda->x / 64, 1);
+// 	m->dda->flag *= 64;
+// 	if (check_wall(m, m->dda->x, m->dda->y))
+// 		my_mlx_pixel_put(m, m->dda->w, m->dda->h,get_color_image(m, m->dda->flag, (((m->dda->h - ((m->height - m->dda->wall) / 2)) * 64) / m->dda->wall), m->dda->direction));
+// }
+
 void draw_line(t_ray *ray)
 {
     int i = 0;
@@ -205,15 +234,6 @@ void draw_line(t_ray *ray)
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
         h = 0;
-        // my_mlx_pixel_put(ray,1000,201,0x000000);
-        // my_mlx_pixel_put(ray,1000,204,0x000000);
-        // my_mlx_pixel_put(ray,1000,210,0x000000);
-        // my_mlx_pixel_put(ray,1000,220,0x000000);
-        // my_mlx_pixel_put(ray,1000,211,0x000000);
-        // my_mlx_pixel_put(ray,1000,209,0x000000);
-        // my_mlx_pixel_put(ray,1000,208,0x000000);
-        // my_mlx_pixel_put(ray,1000,205,0x000000);
-
         while (h <= HEIGHT && i <= WIDTH)
         {
             if (h <= (HEIGHT - ray->hit->wallhei) / 2)
@@ -225,10 +245,17 @@ void draw_line(t_ray *ray)
                 //you can make you texture here for the floor
             else if (h <= ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
+                    double flag = fmod(ray->hit->wallhity / 50,1);
+                    flag *= 50;
                 if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,50) == 1)
-                     my_mlx_pixel_put(ray,i,h,colors_img(ray, (50 * ((int)ray->hit->wallhity % 50)) / (int)ray->hit->wallhei, (50 * 50) / (int)ray->hit->wallhei));
+                {
+
+                        // my_mlx_pixel_put(ray,i,h,0xFFB833);
+                        // printf("----[%f]--\n",ray->wallhitx);
+                    //  my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - (int)ray->hit->wallhei) / 2)) * 50) / (int)ray->hit->wallhei);
+                     my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - (int)ray->hit->wallhei) / 2 ))) / (int)ray->hit->wallhei);
+                }
                     // if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,50) == 1)
-                    //     my_mlx_pixel_put(ray,i,h,0xFFB833);
                     // if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,50) == 1)
                     //     my_mlx_pixel_put(ray,i,h,0x8EF21D);
                         // you can make you texture here for the wall
@@ -364,6 +391,8 @@ int main(int ac, char **av)
     t_args *args;
 
     args = malloc(sizeof(t_args));
+    int y = 0;
+    int x = 0;
     args->fd = open (av[1], O_RDONLY);
     t_ray *ray = NULL;
     ray  = malloc(sizeof(t_ray));
@@ -394,6 +423,7 @@ int main(int ac, char **av)
         ray->width = maxLength * 50;;
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
+        get_image(ray,x,y);
         player_position(ray);
         mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
         mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
