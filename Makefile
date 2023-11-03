@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+         #
+#    By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/15 07:18:20 by himejjad          #+#    #+#              #
-#    Updated: 2023/10/30 20:52:05 by ahbajaou         ###   ########.fr        #
+#    Updated: 2023/11/03 08:30:28 by himejjad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME = cub3D
-SRC1 = main.c parsing.c get_map.c utls_parse.c get_next_line_utils.c get_next_line.c
+SRC1 = main.c parsing.c get_map.c utls_parse.c get_next_line_utils.c get_next_line.c textures.c
 
 FLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 MLX = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o

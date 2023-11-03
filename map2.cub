@@ -6,8 +6,8 @@ WE ./image/path_to_the_west_texture.xpm
 
 EA  ./image/path_to_the_east_texture.xpm
 
-F    255,255,0
-C     255,25,255
+F    22,20,100
+C     25,205,250
 
 1111111111111111111111111
 10000000000000000000000010100001

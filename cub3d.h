@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/02 03:55:59 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/03 08:31:00 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,16 @@ typedef struct t_ray
     float     wallhitboton;
     float     wallhitheight;
     float       distance;
+     char *we;
+    char *no;
+    char *ea;
+    char *so;
+    int floor_r;
+    int floor_g;
+    int floor_b;
+    int cell_r;
+    int cell_g;
+    int cell_b;
     int flagmap;
     int flag;
     int height;
@@ -106,12 +116,12 @@ typedef struct s_args
     int yp;
     int height;
     int width; 
+    char *floor;
+    char *cell;
     char *we;
     char *no;
     char *ea;
     char *so;
-    char *floor;
-    char *cell;
     int floor_r;
     int floor_g;
     int floor_b;
@@ -129,4 +139,6 @@ int	count_lines(char **map);
 int	check_cub(char *file);
 void	check_wall2(t_args *args);
 char	*ft_strdup(const char *s1);
+void get_image(t_ray *ray, int x, int y);
+int colors_img(t_ray *ray, int x, int y);
 #endif
