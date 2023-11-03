@@ -135,9 +135,6 @@ void putpixel(t_ray *ray,int x,int y,int color)
 {
     int i = 0;
     int j = 0;
-    // exit(0);
-    (void)color;
-    (void)ray;
     while (i < 9)
     {
         j = 0;
@@ -163,12 +160,8 @@ void    drawwall(t_ray *ray)
         {
             if (ray->map[p / 10][k / 10] == 0)
                  break ;
-            // printf("--[%d]--\n",ray->map[p / 10][k / 10]);
             if (ray->map[p / 10][k / 10] == '1' || ray->map[p / 10][k / 10] == ' ' || ray->map[p / 10][k / 10] == '\0' || ray->map[p / 10][k / 10] == '\n')
-            {
                 putpixel(ray,p,k,0xffffff);
-            }
-            // j++;
             k += 10;
         } 
         p += 10;
@@ -201,18 +194,29 @@ void draw_line(t_ray *ray)
     int h = 0;
     ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
-        // ray->p->playerrotatangl += FOV_ANGLE / WIDTH;
     while (i <= WIDTH)
     {
-        // draw3d(ray);
         findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
         h = 0;
+        // my_mlx_pixel_put(ray,1000,201,0x000000);
+        // my_mlx_pixel_put(ray,1000,204,0x000000);
+        // my_mlx_pixel_put(ray,1000,210,0x000000);
+        // my_mlx_pixel_put(ray,1000,220,0x000000);
+        // my_mlx_pixel_put(ray,1000,211,0x000000);
+        // my_mlx_pixel_put(ray,1000,209,0x000000);
+        // my_mlx_pixel_put(ray,1000,208,0x000000);
+        // my_mlx_pixel_put(ray,1000,205,0x000000);
+
         while (h <= HEIGHT && i <= WIDTH)
         {
             if (h <= (HEIGHT - ray->hit->wallhei) / 2)
+            {
                     my_mlx_pixel_put(ray,i,h,0x1DE8F2);
+                    // printf("----i == %d---h == %d-------\n",i,h);
+                    // printf("-----%f-----\n",(HEIGHT - ray->hit->wallhei) / 2);
+            }
                 //you can make you texture here for the floor
             else if (h <= ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
             {
@@ -231,109 +235,40 @@ void draw_line(t_ray *ray)
             h++;
         }
         ray->hit->rayangle += (float)1 / WIDTH;
-        // ray->p->playerrotatangl += 0.05;
-        // ray->hit->angle_fov  += 0.05;
         if (ray->hit->angle_fov <= 32)
             ray->hit->angle_fov += (float)1 / (WIDTH / 50);
         i++;
     }
 }
-// void draw_line_with_distance(t_ray *ray, int x, int y, float angle, float length) {
-//     // Calculate the endpoint based on the angle and distance
-//     float end_x = x + length * cos(angle);
-//     float end_y = y + length * sin(angle);
 
-//     int dx = abs((int)end_x - (int)x);
-//     int dy = abs((int)end_y - (int)y);
-//     int steps = (dy < dx) ? dx : dy; // Use the larger of dx and dy for steps
 
-//     float x_increment = (end_x - x) / steps;
-//     float y_increment = (end_y - y) / steps;
-
-//     float current_x = x;
-//     float current_y = y;
-
-//     for (int i = 0; i < steps; i++) {
-//         my_mlx_pixel_put(ray, (int)current_x, (int)current_y, 0xff0000);
-//         current_x += x_increment;
-//         current_y += y_increment;
-//     }
-// }
-void draw_line_with_angle(t_ray *ray, float x, float y, float xx, float yy)
+void draw_ray_with_distance(t_ray *ray, float x, float y, float angle)
 {
+    float end_x = x + 10 * cos(angle);
+    float end_y = y + 10 * sin(angle);
 
-    int end_x = xx; //+ length * cos(angle);
-    int end_y = yy; //+ length * sin(angle);
-
-    int dx = abs(end_x - (int)x);
-    int dy = abs(end_y - (int)y);
-    int steps = (dy < dx) ? dy : dx;
-
-    float x_increment = (float)(end_x - x) / steps;
-    float y_increment = (float)(end_y - y) / steps;
-
-    float current_x = (float)x;
-    float current_y = (float)y;
+    int steps = 10;  
 
     for (int i = 0; i < steps; i++)
     {
-        my_mlx_pixel_put(ray, (int)current_x, (int)current_y, 0xff0000);
-        current_x += x_increment;
-        current_y += y_increment;
+        x += (end_x - x) / steps;
+        y += (end_y - y) / steps;
+        my_mlx_pixel_put(ray, (y), (x), 0xff0000);
     }
 }
 
-
-// void draw_line_with_distance(t_ray *ray, float x, float y, float distance) {
-//     // Calculate the endpoint based on the angle and distance
-//     float end_x = x + distance;
-//     float end_y = y;
-
-//     // Determine the number of steps based on the distance
-//     int num_steps = (int)distance;
-
-//     for (int step = 0; step <= num_steps; step++) {
-//         // Calculate the current position
-//         float current_x = x + (end_x - x) * step / num_steps;
-//         float current_y = y + (end_y - y) * step / num_steps;
-
-//         // Draw a pixel at the current position
-//         my_mlx_pixel_put(ray, (int)current_x, (int)current_y, 0xff0000);
-//     }
-// }
-
-
-void    wallraycast(t_ray *ray,int x,int y,float rayangel)
-{
-    int x1;
-    int y1;
-    int i = 0;
-
-
-    while (1)
-    {
-        x1 = x +  (i * cos(rayangel + (PI / 180.0)));
-        y1 = y +  (i * sin(rayangel + (PI / 180.0)));
-        if (checkmaphawall(ray,x1,y1,10) == 1)
-            break;
-        i++;
-    }
-    ray->hit->wallhitx = x1;
-    ray->hit->wallhity = y1;
-    ray->hit->distance = i;
-}
 void     drawray(t_ray *ray)
 {
-    int num_rays = (ray->width);
-    float rayangle = ray->p->playerrotatangl - 30 * (PI / 180);
+    int num_rays = 1;
+    float rayangle = ray->p->playerrotatangl;
     int i = 0;
     while (i < num_rays)
     {
 
-        wallraycast(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 10,rayangle);
-        draw_line_with_angle(ray,(ray->p->py / 50) * 10,(ray->p->px / 50) * 10,(ray->hit->wallhity),ray->hit->wallhitx);
-    //    draw_line_with_distance(ray,((ray->p->py / 50) * 10) + cos(ray->p->playerrotatangl),((ray->p->px / 50) * 10) + sin(ray->p->playerrotatangl),50);
-        rayangle += FOV_ANGLE / num_rays;
+        // wallraycast(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 10,rayangle);
+        // draw_line_with_angle(ray,(ray->p->py / 50) * 10,(ray->p->px / 50) * 10,(ray->hit->wallhity),ray->hit->wallhitx);
+        draw_ray_with_distance(ray,(ray->p->px / 50) * 10,(ray->p->py / 50) * 10,rayangle);
+        rayangle += (float)1 / num_rays;
         i++;
     }
 }
@@ -388,8 +323,9 @@ void    player_position(t_ray *ray)
                 ray->p->py = j * 50;
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
-                ray->p->walkspeed = 3;
-                ray->p->turnspeed = 3 * (PI / 180);
+                ray->p->walkspeed = 4;
+                ray->p->turnspeed = 4 * (PI / 180);
+                ray->flag = 0;
                 break;
             }
             j++;
@@ -411,7 +347,6 @@ int main(int ac, char **av)
     args = malloc(sizeof(t_args));
     args->fd = open (av[1], O_RDONLY);
     t_ray *ray = NULL;
-    // printf("------------------------------\n");
     ray  = malloc(sizeof(t_ray));
     ray->img = malloc(sizeof(t_img));
     ray->p = malloc(sizeof(t_player));
@@ -437,14 +372,12 @@ int main(int ac, char **av)
             p++;
         }
         ray->width = maxLength * 50;;
-        // printf("--hei = %d----wid = %d----\n",ray->height,ray->width);
 	    ray->mlx = mlx_init(ray);
 	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
         player_position(ray);
         mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
         mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
         mlx_hook(ray->mlx_win,17,0,mouse,ray);
-        // mlx_hook(ray->mlx_win,3,0L,map,ray);
         mlx_loop_hook(ray->mlx,draw,ray);
 	    mlx_loop(ray->mlx);
     }
