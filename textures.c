@@ -29,6 +29,8 @@ int colors_img(t_ray *ray, int x, int y)
 	char *str;
 	// str = ft_strdup("");
 	//  if (ray->deriction == 1)
+		if (y >= ray->hit->wallhei)
+			return 0;
 		str = ray->img->addr2 + (y * ray->img->line_length2 + x * (ray->img->bits_per_pixel2 / 8));
 		// printf("|%d|\n",*(unsigned int *)str);
 		// exit(0);

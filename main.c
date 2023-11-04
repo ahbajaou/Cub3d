@@ -250,16 +250,17 @@ void draw_line(t_ray *ray)
                 {
 
                         // my_mlx_pixel_put(ray,i,h,0xFFB833);
+                    double flag1 = fmod((double)ray->hit->wallhitx / 64,1);
+                    double flag = fmod((double)ray->hit->wallhity / 64,1);
+                    flag *= 64;
+                    flag1 *= 64;
                         // printf("----[%f]--\n", (((h - ((HEIGHT - ray->hit->wallhei) / 2 ))) / ray->hit->wallhei));
                         // ray->deriction = 1;
                         //  my_mlx_pixel_put(ray,i,h,colors_img(ray, i,h));
                     //  my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - (int)ray->hit->wallhei) / 2)) * 64) / (int)ray->hit->wallhei);
                     // (((m->dda->h - ((HEIGHT - ray->hit->wallhei) / 2 )) *64) / ray->hit->wallhei)
-                    double flag1 = fmod((double)ray->hit->wallhitx / 64,1);
-                    double flag = fmod((double)ray->hit->wallhity / 64,1);
-                    flag *= 64;
-                    flag1 *= 64;
-                     my_mlx_pixel_put(ray,i,h,colors_img(ray,flag1,(h - (HEIGHT - ray->hit->wallhei) / 2 )));
+                        // printf("---------%f-------\n",ray->hit->wallhei);
+                     my_mlx_pixel_put(ray,i,h,colors_img(ray,(h - (HEIGHT - ray->hit->wallhei) / 2 ),flag1));
 
                     //  my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - ray->hit->wallhei) / 2 ))) / ray->hit->wallhei);
                 }
