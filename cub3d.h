@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/03 08:31:00 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/04 07:08:14 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,16 @@
 
 typedef struct	s_img {
 	void	*img;
+    void	*img2;
 	char	*addr;
+     void	*mlx;
+    char	*addr2;
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+    	int		bits_per_pixel2;
+	int		line_length2;
+	int		endian2;
 }				t_img;
 
 typedef struct t_hitray
@@ -97,6 +103,7 @@ typedef struct t_ray
     int flag;
     int height;
     int width;
+    int deriction;
     t_img *img;
     t_player *p;
     t_hitray *hit;
@@ -128,6 +135,7 @@ typedef struct s_args
     int cell_r;
     int cell_g;
     int cell_b;
+    ;
     
 }t_args;
 
@@ -141,4 +149,5 @@ void	check_wall2(t_args *args);
 char	*ft_strdup(const char *s1);
 void get_image(t_ray *ray, int x, int y);
 int colors_img(t_ray *ray, int x, int y);
+int checkmaphawall(t_ray *ray, int x, int y,int size);
 #endif

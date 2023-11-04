@@ -15,10 +15,11 @@
 // }
 void get_image(t_ray *ray, int x, int y)
 {
-	ray->img = malloc(sizeof(t_ray));
-	// printf("-=-=-=-=-=->%s\n", ray->no);
-    ray->img->img = mlx_xpm_file_to_image(ray->mlx,ray->so, &x, &y);
-	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length, &ray->img->endian);
+	// ray->img = malloc(sizeof(t_ray));
+	printf("-=-=-=-=-=->%s\n", ray->ea);
+    ray->img->img2 = mlx_xpm_file_to_image(ray->mlx,ray->ea, &x, &y);
+
+	ray->img->addr2 = mlx_get_data_addr(ray->img->img2, &ray->img->bits_per_pixel2, &ray->img->line_length2, &ray->img->endian2);
 	// printf("-=-=-0=-=->%s\n",ray->img->addr );
 }
 
@@ -26,9 +27,12 @@ int colors_img(t_ray *ray, int x, int y)
 {
 	// printf("--------x == %d-----y == %d---\n",x,y);
 	char *str;
-		str = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
+	// str = ft_strdup("");
+	//  if (ray->deriction == 1)
+		str = ray->img->addr2 + (y * ray->img->line_length2 + x * (ray->img->bits_per_pixel2 / 8));
 		// printf("|%d|\n",*(unsigned int *)str);
 		// exit(0);
-		
-		return(*( int *)str);
+		// else
+		// return(*(int *)str);
+	return(*(int *)str);
 }
