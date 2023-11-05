@@ -5,8 +5,8 @@
 void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
 {
 	char	*dst;
-    // if (x <= 0 || x >= ray->width || y <= 0 || y >= ray->height)
-    //         return ;
+    if (x <= 0 || x >= WIDTH || y <= 0 || y >= HEIGHT)
+            return ;
 	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
 	*( int*)dst = color;
 }
@@ -167,26 +167,6 @@ void    drawwall(t_ray *ray)
         p += 10;
     }
 }
-void    findwallhit(t_ray *ray,float x,float y,float angel)
-{
-    int x1;
-    int y1;
-    int i = 0;
-
-    while (1)
-    {
-        x1 = x +  (i * cos(angel + ( PI / 180.0)));
-        y1 = y +  (i * sin(angel + ( PI / 180.0)));
-        if (checkmaphawall(ray,x1,y1,64) == 1)
-            break;
-        i++;
-    }
-    ray->hit->wallhitx = x1;
-    ray->hit->wallhity = y1;
-    ray->hit->walldis = distamce2point(x1,y1,x,y);
-    ray->hit->wallnewdis = ray->hit->walldis * cos(angel - ray->p->playerrotatangl);
-    ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
-}
 
 int	get_clr_rgb(int r, int g, int b)
 {
@@ -220,6 +200,32 @@ int	get_clr_rgb(int r, int g, int b)
 // 	m->dda->flag *= 64;
 // 	if (check_wall(m, m->dda->x, m->dda->y))
 // }
+void    findwallhit(t_ray *ray,float x,float y,float angel)
+{
+    int x1;
+    int y1;
+    int i = 0;
+
+    while (1)
+    {
+        x1 = x +  (i * cos(angel + ( PI / 180.0)));
+        y1 = y +  (i * sin(angel + ( PI / 180.0)));
+        if (checkmaphawall(ray,x1,y1,64) == 1)
+            break;
+        i++;
+    }
+    ray->hit->wallhitx = x1;
+    ray->hit->wallhity = y1;
+    ray->hit->walldis = distamce2point(x1,y1,x,y);
+    ray->hit->wallnewdis = ray->hit->walldis * cos(angel - ray->p->playerrotatangl);
+    ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
+    ray->hit->wallhittop = (HEIGHT - ray->hit->wallhei) / 2;
+    // if (ray->hit->wallhittop <= 0)
+    //     ray->hit->wallhittop = 0;
+    ray->hit->wallhitboton = ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei;
+    // if (ray->hit->wallhitboton >= ray->hit->wallhei)
+    //     ray->hit->wallhitboton = ray->hit->wallhei;
+}
 
 void draw_line(t_ray *ray)
 {
@@ -234,48 +240,34 @@ void draw_line(t_ray *ray)
         findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         //take the wallhitx and wallhity here for your texture
-        while (h < HEIGHT && i < WIDTH)
-        {
-            if (h < (HEIGHT - ray->hit->wallhei) / 2)
+        double flag1 = fmod((double)ray->hit->wallhitx / 64,1);
+        double flag = fmod((double)ray->hit->wallhity / 64,1);
+        flag *= 64;
+        flag1 *= 64;
+            while (h < ray->hit->wallhittop)
             {
                     my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
-                    // printf("----i == %d---h == %d-------\n",i,h);
-                    // printf("-----%f-----\n",(HEIGHT - ray->hit->wallhei) / 2);
+                    h++;
             }
-// 		my_mlx_pixel_put(m, m->dda->w, m->dda->h,get_color_image(m, m->dda->flag, (((m->dda->h - ((m->height - m->dda->wall) / 2)) * 64) / m->dda->wall), m->dda->direction));
-                //you can make you texture here for the floor
-            else if (h < ((HEIGHT - ray->hit->wallhei) / 2) + ray->hit->wallhei)
+            h = ray->hit->wallhittop;
+            while (h < ray->hit->wallhitboton)
             {
-                if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,64) ==1)
-                {
-
-                        // my_mlx_pixel_put(ray,i,h,0xFFB833);
-                    double flag1 = fmod((double)ray->hit->wallhitx / 64,1);
-                    double flag = fmod((double)ray->hit->wallhity / 64,1);
-                    flag *= 64;
-                    flag1 *= 64;
-                        // printf("----[%f]--\n", (((h - ((HEIGHT - ray->hit->wallhei) / 2 ))) / ray->hit->wallhei));
-                        // ray->deriction = 1;
-                        //  my_mlx_pixel_put(ray,i,h,colors_img(ray, i,h));
-                    //  my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - (int)ray->hit->wallhei) / 2)) * 64) / (int)ray->hit->wallhei);
-                    // (((m->dda->h - ((HEIGHT - ray->hit->wallhei) / 2 )) *64) / ray->hit->wallhei)
-                        // printf("---------%f-------\n",ray->hit->wallhei);
-                     my_mlx_pixel_put(ray,i,h,colors_img(ray,(h - (HEIGHT - ray->hit->wallhei) / 2 ),flag1));
-
-                    //  my_mlx_pixel_put(ray,i,h,colors_img(ray, flag,(h - ((HEIGHT - ray->hit->wallhei) / 2 ))) / ray->hit->wallhei);
-                }
-                    if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,64) == 1)
-                      my_mlx_pixel_put(ray,i,h,0xFFB833);
-                    if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,64) == 1)
-                        my_mlx_pixel_put(ray,i,h,0x8EF21D);
-                        // you can make you texture here for the wall
+                // if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,64) ==1)
+                // {
+                     my_mlx_pixel_put(ray,i,h,colors_img(ray,flag1,h));
+                // }
+                // if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,64) == 1)
+                //     my_mlx_pixel_put(ray,i,h,0xFFB833);
+                // if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,64) == 1)
+                //     my_mlx_pixel_put(ray,i,h,0x8EF21D);
+                h++;
             }
-            else
+            while (h < HEIGHT)
+            {
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
-                // you can make you texture here for the sky
+                h++;
+            }
 
-            h++;
-        }
         ray->hit->rayangle += (float)1 / WIDTH;
         if (ray->hit->angle_fov <= 32)
             ray->hit->angle_fov += (float)1 / (WIDTH / 64);
