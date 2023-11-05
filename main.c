@@ -173,33 +173,6 @@ int	get_clr_rgb(int r, int g, int b)
 	return (r * 256 * 256 + g * 256 + b);
 }
 
-// int	get_color_image(t_map *m, int x, int y, int direction)
-// {
-// 	char	*dst;
-
-// 	if (direction == 1)
-// 		dst = m->image[0].addr + (y * m->image[0].line_length + x 
-// 			* (m->image[0].bits_per_pixel / 8));
-// 	if (direction == 2)
-// 		dst = m->image[1].addr + (y * m->image[1].line_length + x
-// 			* (m->image[1].bits_per_pixel / 8));
-// 	if (direction == 3)
-// 		dst = m->image[2].addr + (y * m->image[2].line_length + x
-// 			* (m->image[2].bits_per_pixel / 8));
-// 	if (direction == 4)
-// 		dst = m->image[3].addr + (y * m->image[3].line_length + x 
-// 			* (m->image[3].bits_per_pixel / 8));
-// 	return (*(int *)dst);
-// }
-// void	draw_wall(t_map *m)
-// {
-// 	if (m->dda->direction == 1 || m->dda->direction == 2)
-// 		m->dda->flag = fmod(m->dda->y / 64, 1);
-// 	else if (m->dda->direction == 3 || m->dda->direction == 4)
-// 		m->dda->flag = fmod(m->dda->x / 64, 1);
-// 	m->dda->flag *= 64;
-// 	if (check_wall(m, m->dda->x, m->dda->y))
-// }
 void    findwallhit(t_ray *ray,float x,float y,float angel)
 {
     int x1;
@@ -218,14 +191,16 @@ void    findwallhit(t_ray *ray,float x,float y,float angel)
     ray->hit->wallhity = y1;
     ray->hit->walldis = distamce2point(x1,y1,x,y);
     ray->hit->wallnewdis = ray->hit->walldis * cos(angel - ray->p->playerrotatangl);
-    ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
-    ray->hit->wallhittop = (HEIGHT - ray->hit->wallhei) / 2;
-    // if (ray->hit->wallhittop <= 0)
-    //     ray->hit->wallhittop = 0;
-    ray->hit->wallhitboton = ((HEIGHT) / 2) + (ray->hit->wallhei / 2);
-    // info->window_height / 2) + (proj.wall_height / 2);
-    // if (ray->hit->wallhitboton >= ray->hit->wallhei)
-    //     ray->hit->wallhitboton = ray->hit->wallhei;
+    float projectpla = (WIDTH / 2) / tan(FOV_ANGLE / 2);
+    // ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
+    ray->hit->wallhei = (64 / ray->hit->wallnewdis) * projectpla;
+    int heightwall = (int)ray->hit->wallhei;
+    ray->hit->wallhittop = (HEIGHT  / 2) - (heightwall / 2);
+    if (ray->hit->wallhittop < 0)
+        ray->hit->wallhittop = 0;
+    ray->hit->wallhitboton = (HEIGHT  / 2) + (heightwall / 2);
+    if (ray->hit->wallhitboton > HEIGHT)
+        ray->hit->wallhitboton = HEIGHT;
 }
 
 void draw_line(t_ray *ray)
@@ -237,32 +212,29 @@ void draw_line(t_ray *ray)
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
     while (i < WIDTH)
     {
+
         findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
-        //take the wallhitx and wallhity here for your texture
+
+            //take the wallhitx and wallhity here for your texture
             h = 0;
             while (h < ray->hit->wallhittop)
             {
                     my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
                     h++;
             }
-            // h = ray->hit->wallhittop;
+            // calculate ofx = ;
+            int ofx = ray->wallhitx * ray->hit->textwid / 64;
+                ofx %= ray->hit->textwid;
+            h = ray->hit->wallhittop;
             while (h < ray->hit->wallhitboton)
             {
-                double flag1 = fmod((double)i / 64,1);
-                double flag = fmod((double)h / 64,1);
-                flag *= 64;
-                flag1 *= 64;
-                // if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,64) ==1)
-                // {
-                     my_mlx_pixel_put(ray,i,h,colors_img(ray,flag,flag1));
-                // }
-                // if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,64) == 1)
-                //     my_mlx_pixel_put(ray,i,h,0xFFB833);
-                // if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,64) == 1)
-                //     my_mlx_pixel_put(ray,i,h,0x8EF21D);
+                int dis = h - (HEIGHT / 2) + (ray->hit->wallhei / 2);
+                int ofy = (int)dis * (float)((ray->hit->texthei) / ray->hit->wallhei);
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
                 h++;
             }
+            h = ray->hit->wallhitboton;
             while (h < HEIGHT)
             {
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
@@ -314,6 +286,7 @@ int    draw(t_ray *ray)
     ray->img->img = mlx_new_image(ray->mlx,WIDTH,HEIGHT);
 	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
     update(ray);
+    // findwallhit(ray,ray->p->px,ray->p->py,ray->p->playerrotatangl);
     draw_line(ray);
     if (ray->flagmap == 1)
     {

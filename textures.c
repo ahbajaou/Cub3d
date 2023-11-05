@@ -16,8 +16,9 @@
 void get_image(t_ray *ray, int x, int y)
 {
 	// ray->img = malloc(sizeof(t_ray));
-	printf("-=-=-=-=-=->%s\n", ray->ea);
-    ray->img->img2 = mlx_xpm_file_to_image(ray->mlx,ray->ea, &x, &y);
+	ray->hit->textwid = y;
+	ray->hit->texthei = x;
+    ray->img->img2 = mlx_xpm_file_to_image(ray->mlx,ray->ea, &ray->hit->texthei, &ray->hit->textwid);
 
 	ray->img->addr2 = mlx_get_data_addr(ray->img->img2, &ray->img->bits_per_pixel2, &ray->img->line_length2, &ray->img->endian2);
 	// printf("-=-=-0=-=->%s\n",ray->img->addr );
