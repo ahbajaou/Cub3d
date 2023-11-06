@@ -181,6 +181,7 @@ void findwallhit(t_ray *ray, float x, float y, float angle) {
     int y1;
     int i = 0;
 
+
     while (1) {
         x1 = x + i * cos(angle + (PI / 180.0));
         y1 = y + i * sin(angle + (PI / 180.0));
@@ -208,9 +209,6 @@ void findwallhit(t_ray *ray, float x, float y, float angle) {
         ray->virti = 0;
         ray->horizo = 1;
     }
-
-    // float projectpla = (WIDTH / 2) / tan(FOV_ANGLE / 2);
-	// m->dda->wall = (64 * m->height) / m->dda->new_dis;
     ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
     int heightwall = (int)ray->hit->wallhei;
     ray->hit->wallhittop = (HEIGHT - heightwall) / 2;
@@ -219,7 +217,6 @@ void findwallhit(t_ray *ray, float x, float y, float angle) {
         ray->hit->wallhittop = 0;
     // (int)(((m->height - m->dda->wall) / 2) + m->dda->wall))
     ray->hit->wallhitboton = (HEIGHT - heightwall) + heightwall;
-    
     if (ray->hit->wallhitboton > HEIGHT)
         ray->hit->wallhitboton = HEIGHT;
 }
@@ -246,7 +243,6 @@ void draw_line(t_ray *ray)
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
     //     int distanceToVerticalWallSquared = (x - xWall) * (x - xWall);
     // int distanceToHorizontalWallSquared = (y - yWall) * (y - yWall);
-    float ofx = 0.0;
     float ofy;
     while (i < WIDTH)
     {
@@ -257,27 +253,39 @@ void draw_line(t_ray *ray)
             //take the wallhitx and wallhity here for your texture
         h = 0;
         ray->hit->direction = finddirection(ray);
-        while (h < HEIGHT && i < WIDTH)
+        float ofx = 0.0;
+
+        // float offx = roundf(fmod(diffX * scaleFactor + radarWidth, radarWidth));
+        // float offy = roundf(fmod(diffY * scaleFactor + radarHeight, radarHeight));)
+
+        if (ray->virti == 1)
         {
-            // (int)((m->height - m->dda->wall) / 2
-            if (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
-            {
-                    my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
-            }
-            else if (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
-            {
-                if (ray->hit->direction == 1 || ray->hit->direction == 2)
-                    ofx = fmod(ray->wallhity / 64, 1);
-                else if (ray->hit->direction == 3 || ray->hit->direction == 4)
-                    ofx = fmod(ray->wallhitx / 64, 1);
-                ofx *= 64;
-                 ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-            }
-            else
-                my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
+            ofx = fmod(roundf(ray->hit->wallhity),64);
+        }
+        else
+            ofx = fmod(roundf(ray->hit->wallhitx),64);
+        while (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
+        {
+                my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
+                h++;
+        }
+        while (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
+        {
+            // ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
+            ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
+            if (ofy < 0)
+                ofy += 64;
+            my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            ofy++;
             h++;
         }
+        while (h < HEIGHT)
+        {
+
+            my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
+            h++;
+        }
+        // }
 
         ray->hit->rayangle += (float)1 / WIDTH;
         if (ray->hit->angle_fov <= 32)
@@ -372,7 +380,7 @@ void    player_position(t_ray *ray)
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
                 ray->p->walkspeed = 4;
-                ray->p->turnspeed = 4 * (PI / 180);
+                ray->p->turnspeed = 1 * (PI / 180);
                 ray->flag = 0;
                 break;
             }

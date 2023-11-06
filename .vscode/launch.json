@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/nfs/homes/ahbajaou/Desktop/Cub3d",
-      "program": "/nfs/homes/ahbajaou/Desktop/Cub3d/build/Debug/outDebug",
+      "cwd": "/nfs/homes/ahbajaou/Desktop/ddd",
+      "program": "/nfs/homes/ahbajaou/Desktop/ddd/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
