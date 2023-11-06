@@ -6,7 +6,7 @@
 /*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/06 01:25:38 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/06 18:17:53 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ typedef struct t_ray
     int flag;
     int height;
     int width;
-    double virti;
-    double horizo;
+    int virti;
+    int horizo;
     int deriction;
     t_img *img;
     t_player *p;
