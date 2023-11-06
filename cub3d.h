@@ -6,7 +6,7 @@
 /*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/05 21:07:00 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/06 01:25:38 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #define BUFFER_SIZE 1
 #define PI 3.1415926
 #define M_PI_2 1.57079632679489661923
+#define M_PI4 0.785398163397448309616
 #define TWO_PI 6.28318530
 #define UP 119
 #define DOWN 115
@@ -56,7 +57,7 @@ typedef struct t_hitray
     float rayangle;
     float wallhitx;
     float wallhity;
-    float distance;
+    int  direction;
     float      angle_fov;
     float     wallhittop;
     float     wallhitboton;
@@ -105,6 +106,8 @@ typedef struct t_ray
     int flag;
     int height;
     int width;
+    double virti;
+    double horizo;
     int deriction;
     t_img *img;
     t_player *p;

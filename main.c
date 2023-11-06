@@ -106,11 +106,14 @@ int update(t_ray *ray)
     }
     playerx += ray->p->px;
     playery += ray->p->py;
-        if (ray->map[(int)playerx / 64][(int)playery / 64] != '1')
+        if (ray->map[(int)(playerx / 64)][(int)(playery / 64)] != '1')
         {
             ray->p->px = playerx;
             ray->p->py = playery;
         }
+    // ray->virti = abs((int)(ray->p->px - ray->wallhitx)); 
+    // ray->horizo = abs((int)(ray->p->py - ray->wallhity));
+
     return 0;
 }
 
@@ -173,36 +176,67 @@ int	get_clr_rgb(int r, int g, int b)
 	return (r * 256 * 256 + g * 256 + b);
 }
 
-void    findwallhit(t_ray *ray,float x,float y,float angel)
-{
+void findwallhit(t_ray *ray, float x, float y, float angle) {
     int x1;
     int y1;
     int i = 0;
 
-    while (1)
-    {
-        x1 = x +  (i * cos(angel + ( PI / 180.0)));
-        y1 = y +  (i * sin(angel + ( PI / 180.0)));
-        if (checkmaphawall(ray,x1,y1,64) == 1)
+    while (1) {
+        x1 = x + i * cos(angle + (PI / 180.0));
+        y1 = y + i * sin(angle + (PI / 180.0));
+        
+        if (checkmaphawall(ray, x1, y1, 64) == 1)
             break;
+        
         i++;
     }
+
     ray->hit->wallhitx = x1;
     ray->hit->wallhity = y1;
-    ray->hit->walldis = distamce2point(x1,y1,x,y);
-    ray->hit->wallnewdis = ray->hit->walldis * cos(angel - ray->p->playerrotatangl);
-    float projectpla = (WIDTH / 2) / tan(FOV_ANGLE / 2);
-    // ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
-    ray->hit->wallhei = (64 / ray->hit->wallnewdis) * projectpla;
+   ray->hit->walldis = distamce2point(x1,y1,x,y);
+    ray->hit->wallnewdis = ray->hit->walldis * cos(angle - ray->p->playerrotatangl);
+
+    // Calculate the wall slope
+    double wall_slope = atan2(y1 - y, x1 - x);
+
+    if (wall_slope >= -M_PI4 && wall_slope < M_PI4) {
+        // Vertical wall
+        ray->virti = 1;
+        ray->horizo = 0;
+    } else {
+        // Horizontal wall
+        ray->virti = 0;
+        ray->horizo = 1;
+    }
+
+    // float projectpla = (WIDTH / 2) / tan(FOV_ANGLE / 2);
+	// m->dda->wall = (64 * m->height) / m->dda->new_dis;
+    ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
     int heightwall = (int)ray->hit->wallhei;
-    ray->hit->wallhittop = (HEIGHT  / 2) - (heightwall / 2);
+    ray->hit->wallhittop = (HEIGHT - heightwall) / 2;
+    
     if (ray->hit->wallhittop < 0)
         ray->hit->wallhittop = 0;
-    ray->hit->wallhitboton = (HEIGHT  / 2) + (heightwall / 2);
+    // (int)(((m->height - m->dda->wall) / 2) + m->dda->wall))
+    ray->hit->wallhitboton = (HEIGHT - heightwall) + heightwall;
+    
     if (ray->hit->wallhitboton > HEIGHT)
         ray->hit->wallhitboton = HEIGHT;
 }
+int finddirection(t_ray *ray)
+{
+    int direction;
 
+	if (ray->map[(int)((ray->p->px - 1) / 64)][(int)(ray->p->py / 64)] == '0')
+		direction = 1;
+	if (ray->map[(int)((ray->p->px + 1) / 64)][(int)(ray->p->py / 64)] == '0')
+		direction = 2;
+	if (ray->map[(int)(ray->p->px / 64)][(int)((ray->p->py - 1) / 64)] == '0')
+		direction = 3;
+	if (ray->map[(int)(ray->p->px / 64)][(int)((ray->p->py + 1) / 64)] == '0')
+		direction = 4;
+    return (direction);
+}
 void draw_line(t_ray *ray)
 {
     int i = 0;
@@ -210,6 +244,10 @@ void draw_line(t_ray *ray)
       ray->deriction = 0;
     ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
+    //     int distanceToVerticalWallSquared = (x - xWall) * (x - xWall);
+    // int distanceToHorizontalWallSquared = (y - yWall) * (y - yWall);
+    float ofx = 0.0;
+    float ofy;
     while (i < WIDTH)
     {
 
@@ -217,29 +255,29 @@ void draw_line(t_ray *ray)
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
 
             //take the wallhitx and wallhity here for your texture
-            h = 0;
-            while (h < ray->hit->wallhittop)
+        h = 0;
+        ray->hit->direction = finddirection(ray);
+        while (h < HEIGHT && i < WIDTH)
+        {
+            // (int)((m->height - m->dda->wall) / 2
+            if (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
             {
                     my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
-                    h++;
             }
-            // calculate ofx = ;
-            int ofx = ray->wallhitx * ray->hit->textwid / 64;
-                ofx %= ray->hit->textwid;
-            h = ray->hit->wallhittop;
-            while (h < ray->hit->wallhitboton)
+            else if (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
             {
-                int dis = h - (HEIGHT / 2) + (ray->hit->wallhei / 2);
-                int ofy = (int)dis * (float)((ray->hit->texthei) / ray->hit->wallhei);
+                if (ray->hit->direction == 1 || ray->hit->direction == 2)
+                    ofx = fmod(ray->wallhity / 64, 1);
+                else if (ray->hit->direction == 3 || ray->hit->direction == 4)
+                    ofx = fmod(ray->wallhitx / 64, 1);
+                ofx *= 64;
+                 ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
                 my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-                h++;
             }
-            h = ray->hit->wallhitboton;
-            while (h < HEIGHT)
-            {
+            else
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
-                h++;
-            }
+            h++;
+        }
 
         ray->hit->rayangle += (float)1 / WIDTH;
         if (ray->hit->angle_fov <= 32)
@@ -267,13 +305,14 @@ void draw_ray_with_distance(t_ray *ray, float x, float y, float angle)
 void     drawray(t_ray *ray)
 {
     int num_rays = 1;
-    float rayangle = ray->p->playerrotatangl;
+    float rayangle = ray->p->playerrotatangl  - 32 * (PI / 180);
     int i = 0;
     while (i < num_rays)
     {
 
         // wallraycast(ray,(ray->p->px / 64) * 10,(ray->p->py / 64) * 10,rayangle);
         // draw_line_with_angle(ray,(ray->p->py / 64) * 10,(ray->p->px / 64) * 10,(ray->hit->wallhity),ray->hit->wallhitx);
+        // findwallhit(ray,ray->p->px,ray->p->py,rayangle);
         draw_ray_with_distance(ray,(ray->p->px / 64) * 10,(ray->p->py / 64) * 10,rayangle);
         rayangle += (float)1 / num_rays;
         i++;
