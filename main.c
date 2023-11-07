@@ -178,13 +178,15 @@ int	get_clr_rgb(int r, int g, int b)
 	return (r * 256 * 256 + g * 256 + b);
 }
 
-void findwallhit(t_ray *ray, float x, float y, float angle) {
+void findwallhit(t_ray *ray, float x, float y, float angle)
+{
     int x1;
     int y1;
     int i = 0;
 
 
-    while (1) {
+    while (1)
+    {
         x1 = x + i * cos(angle + (PI / 180.0));
         y1 = y + i * sin(angle + (PI / 180.0));
         
@@ -200,18 +202,33 @@ void findwallhit(t_ray *ray, float x, float y, float angle) {
     ray->hit->wallnewdis = ray->hit->walldis * cos(angle - ray->p->playerrotatangl);
 
     // Calculate the wall slope
-    double wall_slope = atan2(y1 - y, x1 - x);
+    ray->virti = 0;
+    ray->horizo = 0;
+    // double wall_slope = atan2(y1 - y, x1 - x);
 
-    if (wall_slope >= -M_PI4 && wall_slope < M_PI4)
+    // if (wall_slope >= -M_PI4 && wall_slope < M_PI4)
+    // {
+    //     // Vertical wall
+    //     ray->virti = 1;
+    //     // ray->horizo = 0;
+    // } else
+    // {
+    //     // Horizontal wall
+    //     ray->virti = 0;
+    //     // ray->horizo = 1;
+    // }
+    if (roundf(fmod(ray->hit->wallhitx,64)) == 0)
     {
-        // Vertical wall
+        // printf("-----0000----\n");
         ray->virti = 1;
-        ray->horizo = 0;
-    } else
+        // ray->horizo = 0;
+
+    }
+    else if (roundf(fmod(ray->hit->wallhity,64)) == 0)
     {
-        // Horizontal wall
+        // printf("---------\n");
+        // ray->horizo = 1;
         ray->virti = 0;
-        ray->horizo = 1;
     }
     ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
     int heightwall = (int)ray->hit->wallhei;
@@ -256,23 +273,8 @@ void draw_line(t_ray *ray)
 
         findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
-
-            //take the wallhitx and wallhity here for your texture
         h = 0;
         int ofx = 0;
-        // printf("--vir == %d--hor == %d----\n",ray->virti,ray->horizo);
-            if (ray->virti == 0 || ray->horizo == 0)
-            {
-                // printf("-----------++++++++++++++++----------\n");
-                ofx = fmod((ray->hit->wallhitx),64) * 64 / ray->hit->textwid;
-
-            }
-            else
-            {
-                // printf("--------------------------------\n");
-                ofx = fmod((ray->hit->wallhity),64) * 64 / ray->hit->textwid;
-            }
-        // printf("--------horz == %d--virti == %d---\n",ray->horizo,ray->virti);
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
         {
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
@@ -281,9 +283,15 @@ void draw_line(t_ray *ray)
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
         {
             // ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
+                if (ray->virti == 0)
+                {
+                    ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+                }
+                else if (ray->virti == 1)
+                {
+                    ofx = fmod(ray->hit->wallhity,64) * 64 / 64;
+                }
             ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
-            // if (ofy < 0)
-            //     ofy += 64;
             my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
             h++;
         }
