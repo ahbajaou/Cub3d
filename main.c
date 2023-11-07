@@ -262,10 +262,10 @@ void draw_line(t_ray *ray)
         int ofx = 0;
                 if (ray->virti == 0)
                 {
-                    ofx = fmod(ray->hit->wallhity,64) * 64 / 64;
-                    printf("-----%d----------\n",ofx);
+                    ofx = fmod(ray->hit->wallhity,64);
+                    // printf("-----%d----------\n",ofx);
                     if (ofx >= 63)
-                        ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+                        ofx = fmod(ray->hit->wallhitx,64);
                     // printf("-----%d----------\n",ofx);
 
                 }
