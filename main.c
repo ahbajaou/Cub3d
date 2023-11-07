@@ -203,32 +203,19 @@ void findwallhit(t_ray *ray, float x, float y, float angle)
 
     // Calculate the wall slope
     ray->virti = 0;
-    ray->horizo = 0;
-    // double wall_slope = atan2(y1 - y, x1 - x);
 
-    // if (wall_slope >= -M_PI4 && wall_slope < M_PI4)
-    // {
-    //     // Vertical wall
-    //     ray->virti = 1;
-    //     // ray->horizo = 0;
-    // } else
-    // {
-    //     // Horizontal wall
-    //     ray->virti = 0;
-    //     // ray->horizo = 1;
-    // }
     if (roundf(fmod(ray->hit->wallhitx,64)) == 0)
     {
         // printf("-----0000----\n");
-        ray->virti = 1;
         // ray->horizo = 0;
+        ray->virti = 0;
 
     }
     else if (roundf(fmod(ray->hit->wallhity,64)) == 0)
     {
+        ray->virti = 1;
         // printf("---------\n");
         // ray->horizo = 1;
-        ray->virti = 0;
     }
     ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
     int heightwall = (int)ray->hit->wallhei;
@@ -264,8 +251,6 @@ void draw_line(t_ray *ray)
       ray->deriction = 0;
     ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
-    //     int distanceToVerticalWallSquared = (x - xWall) * (x - xWall);
-    // int distanceToHorizontalWallSquared = (y - yWall) * (y - yWall);
     int ofy;
     ray->hit->direction = finddirection(ray);
     while (i < WIDTH)
@@ -275,6 +260,19 @@ void draw_line(t_ray *ray)
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         h = 0;
         int ofx = 0;
+                if (ray->virti == 0)
+                {
+                    ofx = fmod(ray->hit->wallhity,64) * 64 / 64;
+                    printf("-----%d----------\n",ofx);
+                    if (ofx >= 63)
+                        ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+                    // printf("-----%d----------\n",ofx);
+
+                }
+                else if (ray->virti == 1)
+                {
+                    ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+                }
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
         {
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
@@ -283,14 +281,6 @@ void draw_line(t_ray *ray)
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
         {
             // ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
-                if (ray->virti == 0)
-                {
-                    ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
-                }
-                else if (ray->virti == 1)
-                {
-                    ofx = fmod(ray->hit->wallhity,64) * 64 / 64;
-                }
             ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
             my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
             h++;
