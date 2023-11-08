@@ -33,7 +33,8 @@ float /*  */distamce2point(float x1,float y1,float x2,float y2)
 
 int	keyupdate2(int keycode, t_ray *ray)
 {
-	if (keycode == 65307)
+    printf("----%d----\n",keycode);
+	if (keycode == 53)
 		exit(0);
 	else if (keycode == DOWN)
 		ray->p->playerwalkdirec = -1;
@@ -434,8 +435,8 @@ void    player_position(t_ray *ray)
                 ray->p->py = j * 32;
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
-                ray->p->walkspeed = 4;
-                ray->p->turnspeed = 3 * (PI / 180);
+                ray->p->walkspeed = 8;
+                ray->p->turnspeed = 8 * (PI / 180);
                 ray->flag = 0;
                 break;
             }

@@ -20,24 +20,37 @@
 # include <ctype.h>
 #include <fcntl.h>
 #include "get_next_line.h"
+// #define BUFFER_SIZE 1
+// #define PI 3.1415926
+// //#define M_PI_2 1.57079632679489661923
+// #define M_PI4 0.785398163397448309616
+// #define TWO_PI 6.28318530
+// #define UP 119
+// #define DOWN 115
+// #define RIGHT  65363
+// #define LEFT 65361
+// #define FRAM 124
+// #define US 0,5
+// #define AS 1,5
+// #define HEIGHT 1000
+// #define WIDTH 1000
+// #define FOV_ANGLE 60 * (PI / 180)
+
 #define BUFFER_SIZE 1
 #define PI 3.1415926
-#define M_PI_2 1.57079632679489661923
-#define M_PI4 0.785398163397448309616
 #define TWO_PI 6.28318530
-#define UP 119
-#define DOWN 115
-#define RIGHT_A 100
-#define LEFT_D 97
-#define RIGHT  65363
-#define LEFT 65361
+#define UP 13
+#define DOWN 1
+#define LEFT_D 0
+#define RIGHT_A 2
+#define LEFT 123 
+#define RIGHT 124
 #define FRAM 124
 #define US 0,5
 #define AS 1,5
 #define HEIGHT 1000
 #define WIDTH 1000
 #define FOV_ANGLE 60 * (PI / 180)
-
 typedef struct	s_img {
 	void	*img;
     void	*img2;
