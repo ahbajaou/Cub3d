@@ -83,8 +83,54 @@ int	keyupdate1(int keycode, t_ray *ray)
 }
 
 
-int update(t_ray *ray)
-{
+// int update(t_ray *ray)
+// {
+//     float playerx;
+//     float playery;
+//     float angel;
+//     ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
+//     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
+//     playerx = movestep;
+//     playery = movestep;
+//     if (ray->p->playerwalkdirec != 0)
+//     {
+//         if (ray->flag)
+//         {
+//             angel = ray->p->playerrotatangl - M_PI_2;
+//             playerx *= cos(angel);
+//             playery *= sin(angel);
+//         }
+//         else
+//         {
+//             playerx *= cos(ray->p->playerrotatangl);
+//             playery *= sin(ray->p->playerrotatangl);
+//         }
+//     }
+//     playerx += ray->p->px;
+//     playery += ray->p->py;
+//     // int wallx = (playerx / 32) + cos(ray->p->playerrotatangl);
+//     // int wally = (playery / 32) + sin(ray->p->playerrotatangl);
+//     if (ray->map[(int)((playerx / 32) + cos(ray->p->playerrotatangl))][(int)((playery / 32) + sin(ray->p->playerrotatangl))] != '1')
+//     {
+//         ray->p->px = playerx;
+//         ray->p->py = playery;
+//     }
+//     else 
+//     {
+//         // Handle sliding
+//         if (ray->map[tile_x][(int)(ray->p->py / 32)] != '1') 
+//         {
+//             // Slide along the X-axis
+//             ray->p->px = new_x;
+//         } else if (ray->map[(int)(ray->p->px / 32)][tile_y] != '1') 
+//         {
+//             // Slide along the Y-axis
+//             ray->p->py = new_y;
+//         }
+//     }
+//     return (0);
+// }
+int update(t_ray *ray) {
     float playerx;
     float playery;
     float angel;
@@ -92,30 +138,40 @@ int update(t_ray *ray)
     float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
     playerx = movestep;
     playery = movestep;
-    if (ray->p->playerwalkdirec != 0)
-    {
-        if (ray->flag)
-        {
+
+    if (ray->p->playerwalkdirec != 0) {
+        if (ray->flag) {
             angel = ray->p->playerrotatangl - M_PI_2;
             playerx *= cos(angel);
             playery *= sin(angel);
-        }
-        else
-        {
+        } else {
             playerx *= cos(ray->p->playerrotatangl);
             playery *= sin(ray->p->playerrotatangl);
         }
     }
-    playerx += ray->p->px;
-    playery += ray->p->py;
-    // int wallx = (playerx / 32) + cos(ray->p->playerrotatangl);
-    // int wally = (playery / 32) + sin(ray->p->playerrotatangl);
-    if (ray->map[(int)((playerx / 32) + cos(ray->p->playerrotatangl))][(int)((playery / 32) + sin(ray->p->playerrotatangl))] != '1')
-    {
-        ray->p->px = playerx;
-        ray->p->py = playery;
+
+    float new_x = ray->p->px + playerx;
+    float new_y = ray->p->py + playery;
+
+    int tile_x = (new_x / 32) + cos(ray->p->playerrotatangl);
+    int tile_y = (new_y / 32) + sin(ray->p->playerrotatangl);
+
+    // Check if the next position is a wall ('1')
+    if (ray->map[tile_x][tile_y] != '1') {
+        ray->p->px = new_x;
+        ray->p->py = new_y;
+    } else {
+        // Handle sliding
+        if (ray->map[tile_x][(int)((ray->p->py / 32) + sin(ray->p->playerrotatangl))] != '1') {
+            // Slide along the X-axis
+            ray->p->px = new_x;
+        } else if (ray->map[(int)((ray->p->px / 32) + cos(ray->p->playerrotatangl))][tile_y] != '1') {
+            // Slide along the Y-axis
+            ray->p->py = new_y;
+        }
     }
-    return (0);
+
+    return 0;
 }
 
 
