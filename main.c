@@ -108,9 +108,7 @@ int update(t_ray *ray)
     }
     playerx += ray->p->px;
     playery += ray->p->py;
-    int hitwallx = (playerx / 64) + cos( ray->p->playerrotatangl);
-    int hitwally = ( playery / 64) + sin( ray->p->playerrotatangl);
-        if (ray->map[hitwallx][hitwally] != '1')
+        if (ray->map[(int)(playerx / 64)][(int)(playery / 64)] != '1')
         {
             ray->p->px = playerx;
             ray->p->py = playery;
@@ -235,17 +233,17 @@ void findwallhit(t_ray *ray, float x, float y, float angle)
 
 int finddirection(t_ray *ray)
 {
-    int direction;
-
-	if (ray->map[(int)((ray->p->px - 1) / 64)][(int)(ray->p->py / 64)] == '0')
-		direction = 1;
-	if (ray->map[(int)((ray->p->px + 1) / 64)][(int)(ray->p->py / 64)] == '0')
-		direction = 2;
-	if (ray->map[(int)(ray->p->px / 64)][(int)((ray->p->py - 1) / 64)] == '0')
-		direction = 3;
-	if (ray->map[(int)(ray->p->px / 64)][(int)((ray->p->py + 1) / 64)] == '0')
-		direction = 4;
-    return (direction);
+    // int direction;
+    // printf("=-=-=-=-=->%f\n", ray->p->px);
+	if (ray->map[(int)((ray->hit->wallhitx - 1) / 64)][(int)(ray->hit->wallhity / 64)] == '0')
+		ray->deriction = 1;
+	if (ray->map[(int)((ray->hit->wallhitx + 1) / 64)][(int)(ray->hit->wallhity / 64)] == '0')
+		ray->deriction = 2;
+	 if (ray->map[(int)(ray->hit->wallhitx / 64)][(int)((ray->hit->wallhity - 1) / 64)] == '0')
+		ray->deriction = 3;
+	if (ray->map[(int)(ray->hit->wallhitx / 64)][(int)((ray->hit->wallhity + 1) / 64)] == '0')
+		ray->deriction = 4;
+    return (ray->deriction);
 }
 
 void draw_line(t_ray *ray)
@@ -286,27 +284,7 @@ void draw_line(t_ray *ray)
         {
             // ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
             ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
-            if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,64) == 1)
-            {
-                ray->deriction = 1;
                 my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-            }
-            if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,64) == 1)
-            {
-                ray->deriction = 2;
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-            }
-             if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,64) == 1)
-            {
-                // printf("-=-=-=-=->\n");
-                ray->deriction = 4;
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-            }
-            else if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity,64) == 1)
-            {
-                ray->deriction = 3;
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
-            }
             h++;
         }
         while (h < HEIGHT)
@@ -410,7 +388,7 @@ void    player_position(t_ray *ray)
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
                 ray->p->walkspeed = 4;
-                ray->p->turnspeed = 1 * (PI / 180);
+                ray->p->turnspeed = 3 * (PI / 180);
                 ray->flag = 0;
                 break;
             }

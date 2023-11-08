@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/07 22:16:26 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/08 03:15:00 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,4 +158,5 @@ char	*ft_strdup(const char *s1);
 void get_image(t_ray *ray, int x, int y);
 int colors_img(t_ray *ray, int x, int y);
 int checkmaphawall(t_ray *ray, int x, int y,int size);
+int finddirection(t_ray *ray);
 #endif
