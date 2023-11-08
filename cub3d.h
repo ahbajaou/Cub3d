@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/08 03:15:00 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/08 04:22:00 by ahbajaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 #define FRAM 124
 #define US 0,5
 #define AS 1,5
-#define HEIGHT 850
+#define HEIGHT 1000
 #define WIDTH 1000
 #define FOV_ANGLE 60 * (PI / 180)
 
