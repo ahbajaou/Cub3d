@@ -15,7 +15,7 @@
 // }
 void get_image(t_ray *ray, int x, int y)
 {
-	// ray->img = malloc(sizeof(t_ray));
+	ray->img = malloc(sizeof(t_ray) *4);
 	ray->hit->textwid = y;
 	ray->hit->texthei = x;
 	//------------------------------------//
@@ -35,16 +35,24 @@ void get_image(t_ray *ray, int x, int y)
 
 int colors_img(t_ray *ray, int x, int y)
 {
-	// printf("--------x == %d-----y == %d---\n",x,y);
-	char *str;
-	// str = ft_strdup("");
-	//  if (ray->deriction == 1)
+	// char *str;
+	// printf("--------no == %s\nso----- == %s\n ---\n",ray->no,ray->so);
+	// printf("--------we == %s\nea----- == %s\n ---\n",ray->we,ray->ea);
+	// str =  str;
 	if (x < 0 || y < 0)
 		return 0;
-	str = ray->img->addr2 + (y * ray->img->line_length2 + x * (ray->img->bits_per_pixel2 / 8));
+	if (ray->deriction == 1)
+		ray->str = ray->img[2].addr2 + (y * ray->img[2].line_length2 + x * (ray->img[2].bits_per_pixel2 / 8));
+	else if (ray->deriction == 2)
+		ray->str = ray->img[1].addr2 + (y * ray->img[1].line_length2 + x * (ray->img[1].bits_per_pixel2 / 8));
+	else if (ray->deriction == 3)
+		ray->str = ray->img[0].addr2 + (y * ray->img[0].line_length2 + x * (ray->img[0].bits_per_pixel2 / 8));
+	else if (ray->deriction == 4)
+		ray->str = ray->img[3].addr2 + (y * ray->img[3].line_length2 + x * (ray->img[3].bits_per_pixel2 / 8));
+	
 		// printf("|%d|\n",*(unsigned int *)str);
 		// exit(0);
 		// else
 		// return(*(int *)str);
-	return(*(int *)str);
+	return(*(int *)ray->str);
 }

@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   utls_parse.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 08:00:19 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/30 21:12:16 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/08 01:08:56 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
 
-void error() {
-    if (write(1, "\033[31m", 5) == -1) { /* Check for errors and handle them if needed */ }
-    if (write(1, "ERROR\n", 6) == -1) { /* Check for errors and handle them if needed */ }
+void error() 
+{
+    // if (write(1, "\033[31m", 5) == -1) 
+    // if (write(1, "ERROR\n", 6) == -1) { /* Check for errors and handle them if needed */ }
 	exit(1);
 }
 

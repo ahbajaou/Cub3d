@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/06 18:17:53 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/07 22:16:26 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ typedef struct	s_img {
     	int		bits_per_pixel2;
 	int		line_length2;
 	int		endian2;
+    int textwid;
+    int texthei;
 }				t_img;
 
 typedef struct t_hitray
@@ -103,6 +105,7 @@ typedef struct t_ray
     int cell_g;
     int cell_b;
     int flagmap;
+    char *str;
     int flag;
     int height;
     int width;

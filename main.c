@@ -15,6 +15,8 @@ int checkmaphawall(t_ray *ray, int x, int y,int size)
 {
     if (x <= 0 || x >= ray->height || y <= 0 || y >= ray->width)
         return 1;
+    //   if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
+    //     return 1;
     int x1 = (x / size);
     int y1 = (y / size);
     if (ray->map[x1][y1] == '1' || ray->map[x1][y1] == ' ' || ray->map[x1][y1] == '\0' || ray->map[x1][y1] == '\n' )
@@ -282,7 +284,27 @@ void draw_line(t_ray *ray)
         {
             // ofy = ((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei;
             ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
-            my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity,64) == 1)
+            {
+                ray->deriction = 1;
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            }
+            if (checkmaphawall(ray,ray->hit->wallhitx,ray->hit->wallhity + 1,64) == 1)
+            {
+                ray->deriction = 2;
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            }
+             if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity + 1,64) == 1)
+            {
+                // printf("-=-=-=-=->\n");
+                ray->deriction = 4;
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            }
+            else if (checkmaphawall(ray,ray->hit->wallhitx + 1,ray->hit->wallhity,64) == 1)
+            {
+                ray->deriction = 3;
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+            }
             h++;
         }
         while (h < HEIGHT)

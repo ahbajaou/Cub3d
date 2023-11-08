@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 09:26:46 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/01 03:40:01 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/08 02:35:57 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,8 +147,8 @@ void get_deriction(t_args *args)
 
 void skip_norm_n(t_args *args, int j, int i, char c)
 {
-    args->copy[args->height] = malloc(sizeof(char *));
-    args->copy[args->height] = ft_strdup("");
+    // args->copy[args->height] = malloc(sizeof(char *));
+    args->copy[args->height +1] = ft_strdup("");
     if(args->copy[j][i + 1] == '0' || args->copy[j][i + 1] == c)
         error();
     else if (args->copy[j][i - 1] == '0' || args->copy[j][i - 1] == c)
@@ -196,15 +196,15 @@ void skip_space(t_args *args)
                     else
                     error();
                 }
-            // if(args->copy[j][i] == ' ')
-            // {
-            //     skip_norm_n(args, j, i, 'N');
-            //     skip_norm_n(args, j, i, 'W');
-            //     skip_norm_n(args, j, i, 'E');
-            //     skip_norm_n(args, j, i, 'S');
-            //     // else 
-            //     i++;
-            // }
+            if(args->copy[j][i] == ' ')
+            {
+                skip_norm_n(args, j, i, 'N');
+                skip_norm_n(args, j, i, 'W');
+                skip_norm_n(args, j, i, 'E');
+                skip_norm_n(args, j, i, 'S');
+                // else 
+                i++;
+            }
             i++;
         }
         j++;
@@ -377,13 +377,13 @@ t_args * get_map(t_args *args)
     args->width = ft_strlen(args->copy[0]);
     check_face(args);
     check_n_w_s_e(args);
-    int j = 0 - 1;
-    j--;
+    // int j = 0 - 1;
+    // j--;
     // printf("-=-=-=->%s\n", args->copy[j]);
     get_deriction(args);
     // printf("=-=-=-=->%s\n", args->ea);
     args->height = count_lines(args->copy);
-   skip_space(args);
+//    skip_space(args);
 //    cell_floor(args);
    get_rgb(args);
 //    printf("-=-=-=->%s\n", args->argv[5]);
