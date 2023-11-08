@@ -108,7 +108,9 @@ int update(t_ray *ray)
     }
     playerx += ray->p->px;
     playery += ray->p->py;
-        if (ray->map[(int)(playerx / 64)][(int)(playery / 64)] != '1')
+    int hitwallx = (playerx / 64) + cos( ray->p->playerrotatangl);
+    int hitwally = ( playery / 64) + sin( ray->p->playerrotatangl);
+        if (ray->map[hitwallx][hitwally] != '1')
         {
             ray->p->px = playerx;
             ray->p->py = playery;
