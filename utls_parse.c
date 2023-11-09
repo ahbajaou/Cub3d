@@ -6,17 +6,16 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 08:00:19 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/09 16:47:16 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/09 21:47:53 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-
-void error() 
+void	error(void)
 {
-    write(1, "\033[31m", 5);
-    write(1, "ERROR\n", 6);
+	write(1, "\033[31m", 5);
+	write(1, "ERROR\n", 6);
 	exit(1);
 }
 
@@ -86,42 +85,4 @@ int	count_lines(char **map)
 	while (map[i])
 		i++;
 	return (i);
-}
-
-int	check_cub(char *file)
-{
-	int	len;
-	// int	i;
-
-	// i = 0;
-	len = ft_strlen(file);
-	if (!file)
-		error();
-	if (file[len - 1] == 'b' && file[len - 2] == 'u' && file[len - 3] == 'c'\
-		&& file[len - 4] == '.')
-		return (1);
-	return (0);
-}
-
-char	*ft_strdup(const char *s1)
-{
-	char	*s11;
-	char	*s22;
-	int		i;
-	int		x;
-
-	s11 = (char *)s1;
-	i = 0;
-	x = 0;
-	s22 = malloc(sizeof(char) * (ft_strlen(s11) + 1));
-	if (!s22)
-		return (NULL);
-	while (s11[i])
-	{
-		s22[x] = s11[i];
-		x++;
-		i++;
-	}
-	s22[x] = '\0';
-	return (s22);
 }

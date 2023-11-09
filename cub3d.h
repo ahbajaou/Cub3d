@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:19:09 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/08 04:22:00 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/09 21:43:17 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,21 @@
 # include <ctype.h>
 #include <fcntl.h>
 #include "get_next_line.h"
+// #define BUFFER_SIZE 1
+// #define PI 3.1415926
+// //#define M_PI_2 1.57079632679489661923
+// #define M_PI4 0.785398163397448309616
+// #define TWO_PI 6.28318530
+// #define UP 119
+// #define DOWN 115
+// #define RIGHT  65363
+// #define LEFT 65361
+// #define FRAM 124
+// #define US 0,5
+// #define AS 1,5
+// #define HEIGHT 1000
+// #define WIDTH 1000
+// #define FOV_ANGLE 60 * (PI / 180)
 
 #define BUFFER_SIZE 1
 #define PI 3.1415926
@@ -59,11 +74,12 @@ typedef struct t_hitray
     float wallhity;
     int  direction;
     float      angle_fov;
+    float     wallhittop;
+    float     wallhitboton;
     float     wallhitheight;
     float     wallhei;
     float     walldis;
     float     wallnewdis;
-    int         ofx;
     int textwid;
     int texthei;
 
@@ -144,16 +160,28 @@ typedef struct s_args
     
 }t_args;
 
+int checkmaphawall(t_ray *ray, int x, int y,int size);
+int finddirection(t_ray *ray);
+//------------parsing----------------------//
 void	error(void);
 char	*get_next_line(int fd);
 t_args * get_map(t_args *args);
 char	**ft_split(char *s, char c);
 int	count_lines(char **map);
 int	check_cub(char *file);
-void	check_wall2(t_args *args);
 char	*ft_strdup(const char *s1);
 void get_image(t_ray *ray, int x, int y);
+void	check_wall2(t_args *args);
 int colors_img(t_ray *ray, int x, int y);
-int checkmaphawall(t_ray *ray, int x, int y,int size);
-int finddirection(t_ray *ray);
+void	check_n_w_s_e(t_args *args);
+void	skip_space(t_args *args);
+void	skip_space_norm(t_args *args, int j, int i);
+void	skip_norm_n(t_args *args, int j, int i, char c);
+int	ft_isalnum(int c);
+int	check_face_norm(t_args *args, int j, int i, int count);
+void	check_face(t_args *args);
+int	skip_space_2(t_args *args, int j, int i);
+void	get_deriction_norm(t_args *args, int j, int i);
+void	get_deriction(t_args *args);
+
 #endif
