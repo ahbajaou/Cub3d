@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 09:26:46 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/08 02:35:57 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/09 15:07:42 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void check_face(t_args *args)
 
     j = 0;
     i = 0;
-    // int n = 0;
+    int n = 0;
             int count = 0;
     while(args->argv[j])
     {
@@ -55,7 +55,7 @@ int skip_space_2(t_args *args, int j, int i)
 {
     // int i = 0;
     // int j = 0;
-    // int n = 0;
+    int n = 0;
 
     // while(args->argv[j])
     // {
@@ -106,7 +106,7 @@ void get_deriction(t_args *args)
 {
     if (c == ' ')
         return (1);
-	else if ((c >= '0' && c <= '9')
+	if ((c >= '0' && c <= '9')
 		|| (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		return (1);
 	return (0);
@@ -147,8 +147,8 @@ void get_deriction(t_args *args)
 
 void skip_norm_n(t_args *args, int j, int i, char c)
 {
-    // args->copy[args->height] = malloc(sizeof(char *));
-    args->copy[args->height +1] = ft_strdup("");
+    args->copy[args->height] = malloc(sizeof(char *));
+    args->copy[args->height] = ft_strdup("");
     if(args->copy[j][i + 1] == '0' || args->copy[j][i + 1] == c)
         error();
     else if (args->copy[j][i - 1] == '0' || args->copy[j][i - 1] == c)
@@ -313,26 +313,12 @@ void check_espa(char *args)
     // }
 }
 
-void check_path(t_args *args)
-{
-    if (args->no[0] != '.' && args->no[1] != '/')
-        error();
-    else if (args->so[0] != '.' && args->so[1] == '/')
-        error();
-    else if (args->we[0] != '.' && args->we[1] == '/')
-        error();
-    else if (args->ea[0] != '.' && args->ea[1] == '/')
-        error();
-
-}
-
 void get_rgb(t_args *args)
 {
     check_espa(args->floor);
     check_espa(args->cell);
     check_coma(args->floor);
     check_coma(args->cell);
-    check_path(args);
     check_espa(args->so);
     check_espa(args->we);
     check_espa(args->ea);
@@ -377,17 +363,17 @@ t_args * get_map(t_args *args)
     args->width = ft_strlen(args->copy[0]);
     check_face(args);
     check_n_w_s_e(args);
-    // int j = 0 - 1;
-    // j--;
+    int j = 0 - 1;
+    j--;
     // printf("-=-=-=->%s\n", args->copy[j]);
     get_deriction(args);
     // printf("=-=-=-=->%s\n", args->ea);
     args->height = count_lines(args->copy);
-//    skip_space(args);
+   skip_space(args);
 //    cell_floor(args);
    get_rgb(args);
 //    printf("-=-=-=->%s\n", args->argv[5]);
-//    printf("-=-=-=->%s\n", args->cell);
+   printf("-=-=-=->%s\n", args->cell);
     // int i = 0;
     return(args);
 }
