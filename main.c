@@ -99,14 +99,15 @@ int update(t_ray *ray)
             angel = ray->p->playerrotatangl - M_PI_2;
             playerx *= cos(angel);
             playery *= sin(angel);
-        } else
+        }
+		else
         {
             playerx *= cos(ray->p->playerrotatangl);
             playery *= sin(ray->p->playerrotatangl);
         }
+		playerx += ray->p->px;
+		playery += ray->p->py;
     }
-    playerx += ray->p->px;
-    playery += ray->p->py;
     if (checkmaphawall(ray,playerx, playery,64) == 0)
     {
         
@@ -218,14 +219,33 @@ int finddirection(t_ray *ray)
     return (ray->deriction);
 }
 
+int	getofx(t_ray *ray)
+{
+	int	ofx;
+
+	ofx = 0;
+	if (ray->virti == 0)
+	{
+		ofx = fmod(ray->hit->wallhity,64);
+		if (ofx >= 63)
+			ofx = fmod(ray->hit->wallhitx,64);
+	}
+	else if (ray->virti == 1)
+		ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+	return (ofx);
+
+}
 void draw_line(t_ray *ray)
 {
-    int i = 0;
-    int h = 0;
+    int i;
+    int ofy;
+    int h;
+
+	i = 0;
+	h = 0;
     ray->deriction = 0;
     ray->hit->angle_fov = -32;
     ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
-    int ofy;
     ray->hit->direction = finddirection(ray);
     while (i < WIDTH)
     {
@@ -233,15 +253,7 @@ void draw_line(t_ray *ray)
         findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
             ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
         h = 0;
-        int ofx = 0;
-        if (ray->virti == 0)
-        {
-            ofx = fmod(ray->hit->wallhity,64);
-            if (ofx >= 63)
-                ofx = fmod(ray->hit->wallhitx,64);
-        }
-        else if (ray->virti == 1)
-            ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
+		ray->hit->ofx = getofx(ray);
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
         {
                 my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
@@ -250,7 +262,7 @@ void draw_line(t_ray *ray)
         while (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
         {
             ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ofx,ofy));
+                my_mlx_pixel_put(ray,i,h,colors_img(ray,ray->hit->ofx,ofy));
             h++;
         }
         while (h < HEIGHT)
@@ -268,16 +280,21 @@ void draw_line(t_ray *ray)
 
 void draw_ray_with_distance(t_ray *ray, float x, float y, float angle)
 {
-    float end_x = x + 10 * cos(angle);
-    float end_y = y + 10 * sin(angle);
+    float end_x; 
+    float end_y;
+    int steps;
+	int i;
 
-    int steps = 10;  
-
-    for (int i = 0; i < steps; i++)
+	i = 0;
+	end_x = x + 10 * cos(angle);
+	end_y = y + 10 * sin(angle);
+	steps = 10;  
+    while (i < steps)
     {
         x += (end_x - x) / steps;
         y += (end_y - y) / steps;
         my_mlx_pixel_put(ray, (y), (x), 0xff0000);
+		i++;
     }
 }
 
@@ -315,13 +332,13 @@ int    draw(t_ray *ray)
 void get_rot(char c,t_ray *ray)
 {
     if (c == 'N')
-		ray->p->playerrotatangl = 270;
+		ray->p->playerrotatangl = 360;
     else if (c == 'S')
-		ray->p->playerrotatangl = 90;
+		ray->p->playerrotatangl = 180;
     else if (c == 'E')
-		ray->p->playerrotatangl = 0;
+		ray->p->playerrotatangl = 60;
     else if (c == 'W')
-		ray->p->playerrotatangl = 80;
+		ray->p->playerrotatangl = 270;
 
 }
 
@@ -373,6 +390,33 @@ int    mouse(void)
     exit(0);
     return (0);
 }
+void	get_sizeofmap(t_ray *ray)
+{
+	int p = 0;
+	int px = 0;
+	int maxwid = 0;
+	while (ray->map[p])
+	{
+		px = ft_strlen(ray->map[p]);
+		if (px > maxwid)
+			maxwid = px;
+		p++;
+	}
+	ray->height = p * 64;
+	ray->width = maxwid * 64;
+}
+void    raycasting(t_ray *ray)
+{
+	get_sizeofmap(ray);
+	ray->mlx = mlx_init(ray);
+	ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
+	get_image(ray,WIDTH,HEIGHT);
+	player_position(ray);
+	mlx_hook(ray->mlx_win,2,0,keyupdate2,ray);
+	mlx_hook(ray->mlx_win,3,0,keyupdate1,ray);
+	mlx_loop_hook(ray->mlx,draw,ray);
+	mlx_loop(ray->mlx);
+}
 int main(int ac, char **av)
 {
     t_args *args;
@@ -389,32 +433,8 @@ int main(int ac, char **av)
         args = get_map(args);
         check_wall2(args);
         exchange(ray, args);
-        ray->map = args->copy;
-        int i = 0;
-        while (ray->map[i])
-            i++;
-        ray->height = i * 64;
-        int p = 0;
-        int px = 0;
-        int maxLength = 0;
-        ray->width = 0;
-        while (ray->map[p])
-        {
-            px = ft_strlen(ray->map[p]);
-            if (px > maxLength)
-                maxLength = px;
-            p++;
-        }
-        ray->width = maxLength * 64;
-	    ray->mlx = mlx_init(ray);
-	    ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
-        get_image(ray,WIDTH,HEIGHT);
-        player_position(ray);
-      
-        mlx_hook(ray->mlx_win,2,1L,keyupdate2,ray);
-        mlx_hook(ray->mlx_win,3,2L,keyupdate1,ray);
-        mlx_loop_hook(ray->mlx,draw,ray);
-	    mlx_loop(ray->mlx);
+		ray->map = args->copy;
+		raycasting(ray);
     }
     else 
         error();

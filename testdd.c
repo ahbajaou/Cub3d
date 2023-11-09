@@ -380,7 +380,7 @@ void get_rot(char c,t_ray *ray)
     else if (c == 'E')
 		ray->p->playerrotatangl = 0;
     else if (c == 'W')
-		ray->p->playerrotatangl = 80;
+		ray->p->playerrotatangl = 180;
 
 }
 

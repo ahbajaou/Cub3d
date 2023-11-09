@@ -231,8 +231,8 @@ void check_n_w_s_e(t_args *args)
         }
     j++;
     }
-    // if(count != 1)
-    //     error();
+    if(count != 1)
+        error();
 }
 
 int check_coma(char *args)
