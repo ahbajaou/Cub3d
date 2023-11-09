@@ -342,8 +342,8 @@ void    player_position(t_ray *ray)
                 ray->p->py = j * 64;
                 ray->p->playertunrdirec = 0;
                 ray->p->playerwalkdirec = 0;
-                ray->p->walkspeed = 14;
-                ray->p->turnspeed = 14 * (PI / 180);
+                ray->p->walkspeed = 17;
+                ray->p->turnspeed = 17 * (PI / 180);
                 ray->flag = 0;
                 break;
             }

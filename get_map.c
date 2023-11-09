@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 09:26:46 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/09 15:07:42 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/09 16:47:34 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -373,7 +373,7 @@ t_args * get_map(t_args *args)
 //    cell_floor(args);
    get_rgb(args);
 //    printf("-=-=-=->%s\n", args->argv[5]);
-   printf("-=-=-=->%s\n", args->cell);
+//    printf("-=-=-=->%s\n", args->cell);
     // int i = 0;
     return(args);
 }

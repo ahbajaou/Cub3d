@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 08:00:19 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/08 01:08:56 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/09 16:47:16 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 void error() 
 {
-    // if (write(1, "\033[31m", 5) == -1) 
-    // if (write(1, "ERROR\n", 6) == -1) { /* Check for errors and handle them if needed */ }
+    write(1, "\033[31m", 5);
+    write(1, "ERROR\n", 6);
 	exit(1);
 }
 

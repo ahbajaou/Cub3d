@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:53:04 by himejjad          #+#    #+#             */
-/*   Updated: 2023/10/26 23:53:04 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/10/29 17:00:49 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,17 @@ void	check_wall2(t_args *args)
 	{
 		if (args->copy[i][j] != '1' || args->copy[args->height - 1][j] != '1')
 		{
-			// printf("=-=-=-=-=-=->\n");
-			if (args->copy[i][j] == ' ' &&  args->copy[args->height - 1][j] == ' ')
+			if (args->copy[i][j] == ' ' || args->copy[args->height - 1][j] == ' ')
 				j++;
+			else if (args->copy[i][j] == '0' || args->copy[args->height - 1][j] == '0')
+			{
+				// printf("=-=-=-=-=-=->%c\n", args->copy[i][j]);
+				error();
+			}
 		}
-		// }
 		j++;
 	}
+	
 	i++;
 	while (i < args->height)
 	{
@@ -39,7 +43,12 @@ void	check_wall2(t_args *args)
 		|| args->copy[i][args->width - 1] != '1' )
 		{
 			if (args->copy[i][0] == ' ' &&  args->copy[i][args->width - 1] == ' ')
-			i++;
+				i++;
+			else if (args->copy[i][0] == '0' ||  args->copy[i][args->width - 1] == '0')
+			{
+				// printf("=-=-=-=-=-=->%c\n", args->copy[i][0]);
+				error();
+			}
 		}
 		i++;
 	}
