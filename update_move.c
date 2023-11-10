@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   update_move.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:13:26 by ahbajaou          #+#    #+#             */
-/*   Updated: 2023/11/10 12:33:26 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:38:04 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ void	moves_calcul(t_ray *ray)
 int	update(t_ray *ray)
 {
 	ray->p->playerrotatangl += ray->p->playertunrdirec
-		* ray->p->turnspeed * 0.5;
-	ray->p->movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
+		* ray->p->turnspeed;
+	ray->p->movestep = ray->p->playerwalkdirec * ray->p->walkspeed;
 	ray->p->playerx = ray->p->movestep;
 	ray->p->playery = ray->p->movestep;
 	moves_calcul(ray);

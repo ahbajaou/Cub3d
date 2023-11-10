@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 21:33:39 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/09 21:48:19 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:24:43 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,4 +106,9 @@ void	get_deriction(t_args *args)
 		get_deriction_norm(args, j, i);
 		j++;
 	}
+	check_xpm(args->so);
+	check_xpm(args->we);
+	check_xpm(args->no);
+	check_xpm(args->ea);
+	skip_space(args);
 }

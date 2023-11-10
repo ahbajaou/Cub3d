@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw3d.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 11:50:33 by ahbajaou          #+#    #+#             */
-/*   Updated: 2023/11/10 12:12:47 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:28:25 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void	draw3d(t_ray *ray)
 	ray->deriction = 0;
 	ray->hit->angle_fov = -32;
 	ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
-	ray->hit->direction = finddirection(ray);
 	while (i < WIDTH)
 	{
 		findwallhit(ray, ray->p->px + cos(ray->hit->rayangle

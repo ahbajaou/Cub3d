@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 13:49:16 by ahbajaou          #+#    #+#             */
-/*   Updated: 2023/11/10 14:05:22 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:58:28 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,11 @@ void	raycasting(t_ray *ray)
 	get_sizeofmap(ray);
 	ray->mlx = mlx_init(ray);
 	ray->mlx_win = mlx_new_window(ray->mlx, WIDTH, HEIGHT, "Cub3D");
-	get_image(ray, WIDTH, HEIGHT);
+	get_image(ray);
 	player_position(ray);
 	mlx_hook(ray->mlx_win, 2, 0, keyupdate2, ray);
 	mlx_hook(ray->mlx_win, 3, 0, keyupdate1, ray);
+	mlx_hook(ray->mlx_win, 17, 0, mouse, ray);
 	mlx_loop_hook(ray->mlx, draw, ray);
 	mlx_loop(ray->mlx);
 }
@@ -50,7 +51,7 @@ int	main(int ac, char **av)
 
 	ray = NULL;
 	args = malloc(sizeof(t_args));
-	args->fd = open (av[1], O_RDONLY);
+	args->fd = open(av[1], O_RDONLY);
 	ray = malloc(sizeof(t_ray));
 	ray->img = malloc(sizeof(t_img));
 	ray->p = malloc(sizeof(t_player));

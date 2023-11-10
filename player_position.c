@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_position.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 11:26:43 by ahbajaou          #+#    #+#             */
-/*   Updated: 2023/11/10 11:31:31 by ahbajaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 16:39:51 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	get_rot(char c, t_ray *ray, int i, int j)
 	ray->p->py = j * 64;
 	ray->p->playertunrdirec = 0;
 	ray->p->playerwalkdirec = 0;
-	ray->p->walkspeed = 17;
-	ray->p->turnspeed = 17 * (PI / 180);
+	ray->p->walkspeed = 16;
+	ray->p->turnspeed = 8 * (PI / 180);
 	ray->flag = 0;
 }
 

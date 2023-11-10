@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/Users/himejjad/cb3d",
-      "program": "/Users/himejjad/cb3d/build/Debug/outDebug",
+      "cwd": "/Users/himejjad/final",
+      "program": "/Users/himejjad/final/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 20:10:43 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/09 21:45:13 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:32:46 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ void	get_rgb(t_args *args)
 	args->floor_r = atoi(args->rgb[0]);
 	args->floor_g = atoi(args->rgb[1]);
 	args->floor_b = atoi(args->rgb[2]);
-	args->rgb = NULL;
+	free_rgb(args);
+	free(args->rgb);
 	args->rgb = ft_split(args->cell, ',');
 	check_max_rgb(args);
 	args->cell_r = atoi(args->rgb[0]);
@@ -106,15 +107,17 @@ t_args	*get_map(t_args *args)
 		free(stock);
 		stock = get_next_line(args->fd);
 	}
+	free(stock);
 	args->argv = ft_split(args->str, '\n');
 	args->copy = args->argv + 6;
 	args->copy2 = args->copy;
 	args->width = ft_strlen(args->copy[0]);
+	args->height = count_lines(args->copy);
+	check_wall2(args);
 	check_face(args);
 	check_n_w_s_e(args);
 	get_deriction(args);
-	args->height = count_lines(args->copy);
-	skip_space(args);
+	check_space_2(args);
 	get_rgb(args);
 	return (args);
 }

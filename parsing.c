@@ -6,12 +6,38 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 07:53:04 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/09 21:47:43 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:59:18 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+void	check_wall(t_args *args, int j, int i)
+{
+	int	x;
+
+	x = 0;
+	while (args->copy[args->height - 1][x])
+	{
+		if (args->copy[args->height - 1][x] != '1')
+		{
+			if (args->copy[args->height - 1][x] == '0')
+				error();
+		}
+		x++;
+	}
+	while (args->copy[i][j])
+	{
+		if (args->copy[i][j] != '1')
+		{
+			if (args->copy[i][j] == ' ')
+				j++;
+			else if (args->copy[i][j] == '0')
+				error();
+		}
+		j++;
+	}
+}
 
 void	check_wall2(t_args *args)
 {
@@ -20,37 +46,21 @@ void	check_wall2(t_args *args)
 
 	i = 0;
 	j = 0;
-	 if(!args->copy[0])
-        error();
-	while (args->copy[i][j])
-	{
-		if (args->copy[i][j] != '1' || args->copy[args->height - 1][j] != '1')
-		{
-			if (args->copy[i][j] == ' ' || args->copy[args->height - 1][j] == ' ')
-				j++;
-			else if (args->copy[i][j] == '0' || args->copy[args->height - 1][j] == '0')
-			{
-				// printf("=-=-=-=-=-=->%c\n", args->copy[i][j]);
-				error();
-			}
-		}
-		j++;
-	}
-	
+	if (!args->copy[0])
+		error();
+	check_wall(args, j, i);
 	i++;
 	while (i < args->height)
 	{
-        args->width = ft_strlen(args->copy[i]);
-		if (args->copy[i][0] != '1'
-		|| args->copy[i][args->width - 1] != '1' )
+		args->width = ft_strlen(args->copy[i]);
+		if (args->copy[i][0] != '1' || args->copy[i][args->width] != '1')
 		{
-			if (args->copy[i][0] == ' ' &&  args->copy[i][args->width - 1] == ' ')
+			if (args->copy[i][0] == ' ' && args->copy[i][args->width
+				- 1] == ' ')
 				i++;
-			else if (args->copy[i][0] == '0' ||  args->copy[i][args->width - 1] == '0')
-			{
-				// printf("=-=-=-=-=-=->%c\n", args->copy[i][0]);
+			if (args->copy[i][0] == '0' || args->copy[i][args->width
+				- 1] == '0')
 				error();
-			}
 		}
 		i++;
 	}
@@ -90,4 +100,16 @@ int	check_cub(char *file)
 		&& file[len - 4] == '.')
 		return (1);
 	return (0);
+}
+
+void	check_xpm(char *file)
+{
+	int	len;
+
+	len = ft_strlen(file);
+	if (!file)
+		error();
+	if (file[len - 1] != 'm' && file[len - 2] != 'p' && file[len - 3] != 'x'
+		&& file[len - 4] != '.')
+		error();
 }
