@@ -1,441 +1,68 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/10 13:49:16 by ahbajaou          #+#    #+#             */
+/*   Updated: 2023/11/10 14:05:22 by ahbajaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "cub3d.h"
 
-
-void	my_mlx_pixel_put(t_ray *ray, int x, int y, int color)
+int	draw(t_ray *ray)
 {
-	char	*dst;
-    if (x <= 0 || x >= WIDTH || y <= 0 || y >= HEIGHT)
-            return ;
-	dst = ray->img->addr + (y * ray->img->line_length + x * (ray->img->bits_per_pixel / 8));
-	*( int*)dst = color;
-}
-
-int checkmaphawall(t_ray *ray, int x, int y,int size)
-{
-    if (x <= 0 || x >= ray->height || y <= 0 || y >= ray->width)
-        return 1;
-    //   if (x <= 0 || x >= HEIGHT || y <= 0 || y >= WIDTH)
-    //     return 1;
-    int x1 = (x / size);
-    int y1 = (y / size);
-    if (ray->map[x1][y1] == '1' || ray->map[x1][y1] == ' ' || ray->map[x1][y1] == '\0' || ray->map[x1][y1] == '\n' )
-        return 1;
-    return 0;
-    
-}
-
-
-float   distamce2point(float x1,float y1,float x2,float y2)
-{
-    return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
-}
-
-int	keyupdate2(int keycode, t_ray *ray)
-{
-	if (keycode == 53)
-		exit(0);
-	else if (keycode == DOWN)
-		ray->p->playerwalkdirec = -1;
-	else if (keycode == UP)
-		ray->p->playerwalkdirec = 1;
-	else if (keycode == RIGHT)
-		ray->p->playertunrdirec = 1;
-	else if (keycode == LEFT)
-		ray->p->playertunrdirec = -1;
-	else if (keycode == RIGHT_A)
+	ray->img->img = mlx_new_image(ray->mlx, WIDTH, HEIGHT);
+	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel,
+			&ray->img->line_length, &ray->img->endian);
+	update(ray);
+	draw3d(ray);
+	if (ray->flagmap == 1)
 	{
-		ray->flag = 1;
-		ray->p->playerwalkdirec = -1;
+		drawplayer(ray);
+		drawwall(ray);
+		drawray(ray);
 	}
-	else if (keycode == LEFT_D)
-	{
-		ray->flag = 1;
-		ray->p->playerwalkdirec = 1;
-	}
-    else if (keycode == 46)
-        ray->flagmap = 1;
-    else
-	    return (0);
-    return 0;
+	mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
+	mlx_destroy_image(ray->mlx, ray->img->img);
+	return (0);
 }
 
-int	keyupdate1(int keycode, t_ray *ray)
-{
-	if (keycode == DOWN)
-		ray->p->playerwalkdirec = 0;
-	else if (keycode == UP)
-		ray->p->playerwalkdirec = 0;
-	else if (keycode == RIGHT)
-		ray->p->playertunrdirec = 0;
-	else if (keycode == LEFT)
-		ray->p->playertunrdirec = 0;
-	else if (keycode == RIGHT_A || keycode == LEFT_D)
-	{
-		ray->p->playerwalkdirec = 0;
-		ray->flag = 0;
-	}
-    else if (keycode == 46)
-        ray->flagmap = 0;
-    else
-        return 0;
-    return 0;
-}
-
-int update(t_ray *ray)
-{
-    float playerx;
-    float playery;
-    float angel;
-    ray->p->playerrotatangl += ray->p->playertunrdirec * ray->p->turnspeed * 0.5;
-    float movestep = ray->p->playerwalkdirec * ray->p->walkspeed * 0.5;
-    playerx = movestep;
-    playery = movestep;
-
-    if (ray->p->playerwalkdirec != 0)
-    {
-        if (ray->flag)
-        {
-            angel = ray->p->playerrotatangl - M_PI_2;
-            playerx *= cos(angel);
-            playery *= sin(angel);
-        }
-		else
-        {
-            playerx *= cos(ray->p->playerrotatangl);
-            playery *= sin(ray->p->playerrotatangl);
-        }
-		playerx += ray->p->px;
-		playery += ray->p->py;
-    }
-    if (checkmaphawall(ray,playerx, playery,64) == 0)
-    {
-        
-        if (ray->map[(int)(playerx / 64 + (cos(ray->p->playerrotatangl)))][(int)(playery / 64)] != '1')
-            ray->p->px = playerx;
-        if (ray->map[(int)(playerx / 64)][(int)(playery / 64 + (sin(ray->p->playerrotatangl)))] != '1')
-            ray->p->py = playery;
-    }
-    return 0;
-}
-
-int    drawplayer(t_ray *ray)
-{
-    float i = -1;
-    float j = -1;
-    while (i <= 1)
-    {
-        j = -1;
-        while (j <= 1)
-        {
-            my_mlx_pixel_put(ray,((ray->p->py / 64) * 5) + j,((ray->p->px / 64) * 5) + i, 0xff0000);
-            j++;
-        }
-        i++;
-    }
-    return (0);
-}
-
-void putpixel(t_ray *ray,int x,int y,int color)
-{
-    int i = 0;
-    int j = 0;
-    while (i < 4)
-    {
-        j = 0;
-        while (j < 4)
-        {
-            my_mlx_pixel_put(ray,y + j,x + i,color);
-            j++;
-        }
-        i++;
-    }
-}
-
-void    drawwall(t_ray *ray)
-{
-
-    int p = 0;
-    int k = 0;
-    int j = (ray->height / 64) * 5;
-    int i = (ray->width / 64) * 5;
-    while (p < j)
-    {
-        k = 0;
-        while (k < i)
-        {
-            if (ray->map[p / 5][k / 5] == 0)
-                 break ;
-            if (ray->map[p / 5][k / 5] == '1' || ray->map[p / 5][k / 5] == ' ' || ray->map[p / 5][k / 5] == '\0' || ray->map[p / 5][k / 5] == '\n')
-                putpixel(ray,p,k,0xffffff);
-            k += 5;
-        } 
-        p += 5;
-    }
-}
-
-int	get_clr_rgb(int r, int g, int b)
-{
-	return (r * 256 * 256 + g * 256 + b);
-}
-
-void findwallhit(t_ray *ray, float x, float y, float angle)
-{
-    int x1;
-    int y1;
-    int i = 0;
-
-    while (1)
-    {
-        x1 = x + i * cos(angle);
-        y1 = y + i * sin(angle);
-        if (checkmaphawall(ray, x1, y1, 64) == 1)
-            break;
-        i++;
-    }
-    ray->hit->wallhitx = x1;
-    ray->hit->wallhity = y1;
-    ray->hit->walldis = distamce2point(x1,y1,x,y);
-    ray->hit->wallnewdis = ray->hit->walldis * cos(angle - ray->p->playerrotatangl);
-    ray->virti = 0;
-    if (roundf(fmod(ray->hit->wallhitx,64)) == 0)
-        ray->virti = 0;
-    else if (roundf(fmod(ray->hit->wallhity,64)) == 0)
-        ray->virti = 1;
-    ray->hit->wallhei = (64 * HEIGHT) / ray->hit->wallnewdis;
-
-}
-
-int finddirection(t_ray *ray)
-{
-	if (ray->map[(int)((ray->hit->wallhitx - 1) / 64)][(int)(ray->hit->wallhity / 64)] == '0')
-		ray->deriction = 1;
-	if (ray->map[(int)((ray->hit->wallhitx + 1) / 64)][(int)(ray->hit->wallhity / 64)] == '0')
-		ray->deriction = 2;
-	 if (ray->map[(int)(ray->hit->wallhitx / 64)][(int)((ray->hit->wallhity - 1) / 64)] == '0')
-		ray->deriction = 3;
-	if (ray->map[(int)(ray->hit->wallhitx / 64)][(int)((ray->hit->wallhity + 1) / 64)] == '0')
-		ray->deriction = 4;
-    return (ray->deriction);
-}
-
-int	getofx(t_ray *ray)
-{
-	int	ofx;
-
-	ofx = 0;
-	if (ray->virti == 0)
-	{
-		ofx = fmod(ray->hit->wallhity,64);
-		if (ofx >= 63)
-			ofx = fmod(ray->hit->wallhitx,64);
-	}
-	else if (ray->virti == 1)
-		ofx = fmod(ray->hit->wallhitx,64) * 64 / 64;
-	return (ofx);
-
-}
-void draw_line(t_ray *ray)
-{
-    int i;
-    int ofy;
-    int h;
-
-	i = 0;
-	h = 0;
-    ray->deriction = 0;
-    ray->hit->angle_fov = -32;
-    ray->hit->rayangle = ray->p->playerrotatangl - 32 * (PI / 180);
-    ray->hit->direction = finddirection(ray);
-    while (i < WIDTH)
-    {
-
-        findwallhit(ray,ray->p->px + cos(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))),
-            ray->p->py + sin(ray->hit->rayangle + (ray->hit->angle_fov * (PI / 180))) ,ray->hit->rayangle);
-        h = 0;
-		ray->hit->ofx = getofx(ray);
-        while (h < (int)((HEIGHT - ray->hit->wallhei) / 2))
-        {
-                my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->cell_r, ray->cell_g, ray->cell_b));
-                h++;
-        }
-        while (h < (int)((HEIGHT - ray->hit->wallhei) / 2 ) + ray->hit->wallhei)
-        {
-            ofy = fmod(((h - (HEIGHT - ray->hit->wallhei) / 2) * 64) / ray->hit->wallhei, 64);
-                my_mlx_pixel_put(ray,i,h,colors_img(ray,ray->hit->ofx,ofy));
-            h++;
-        }
-        while (h < HEIGHT)
-        {
-
-            my_mlx_pixel_put(ray,i,h,get_clr_rgb(ray->floor_r, ray->floor_g, ray->floor_b));
-            h++;
-        }
-        ray->hit->rayangle += (float)1 / WIDTH;
-        if (ray->hit->angle_fov <= 64)
-            ray->hit->angle_fov += (float)1 / (WIDTH / 64);
-        i++;
-    }
-}
-
-void draw_ray_with_distance(t_ray *ray, float x, float y, float angle)
-{
-    float end_x; 
-    float end_y;
-    int steps;
-	int i;
-
-	i = 0;
-	end_x = x + 10 * cos(angle);
-	end_y = y + 10 * sin(angle);
-	steps = 10;  
-    while (i < steps)
-    {
-        x += (end_x - x) / steps;
-        y += (end_y - y) / steps;
-        my_mlx_pixel_put(ray, (y), (x), 0xff0000);
-		i++;
-    }
-}
-
-void     drawray(t_ray *ray)
-{
-    int num_rays = 1;
-    int i = 0;
-    float rayangle = ray->p->playerrotatangl;
-    while (i < num_rays)
-    {
-        draw_ray_with_distance(ray,(ray->p->px / 64) * 5,(ray->p->py / 64) * 5,rayangle);
-        rayangle += (float)1 / num_rays;
-        i++;
-    }
-}
-
-int    draw(t_ray *ray)
-{
-
-    ray->img->img = mlx_new_image(ray->mlx,WIDTH,HEIGHT);
-	ray->img->addr = mlx_get_data_addr(ray->img->img, &ray->img->bits_per_pixel, &ray->img->line_length,&ray->img->endian);
-    update(ray);
-    draw_line(ray);
-    if (ray->flagmap == 1)
-    {
-        drawplayer(ray);
-        drawwall(ray);
-        drawray(ray);
-    }
-    mlx_put_image_to_window(ray->mlx, ray->mlx_win, ray->img->img, 0, 0);
-    mlx_destroy_image(ray->mlx,ray->img->img);
-    return (0);
-}
-
-void get_rot(char c,t_ray *ray)
-{
-    if (c == 'N')
-		ray->p->playerrotatangl = 360;
-    else if (c == 'S')
-		ray->p->playerrotatangl = 180;
-    else if (c == 'E')
-		ray->p->playerrotatangl = 60;
-    else if (c == 'W')
-		ray->p->playerrotatangl = 270;
-
-}
-
-void    player_position(t_ray *ray)
-{
-    int i = 0;
-    int j = 0;
-    while (ray->map[i])
-    {
-        j = 0;
-        while (ray->map[i][j])
-        {
-            if (ray->map[i][j] == 'N' || ray->map[i][j] == 'S' || ray->map[i][j] == 'E' || ray->map[i][j] == 'W')
-            {
-                get_rot(ray->map[i][j],ray);
-                ray->map[i][j] = '0';
-                ray->p->px = i * 64;
-                ray->p->py = j * 64;
-                ray->p->playertunrdirec = 0;
-                ray->p->playerwalkdirec = 0;
-                ray->p->walkspeed = 17;
-                ray->p->turnspeed = 17 * (PI / 180);
-                ray->flag = 0;
-                break;
-            }
-            j++;
-        }
-        i++;
-    }
-
-}
-
-void exchange(t_ray *ray, t_args *args)
-{
-    ray->ea = args->ea;
-    ray->we = args->we;
-    ray->no = args->no;
-    ray->so = args->so;
-    ray->cell_b = args->cell_b;
-    ray->cell_r = args->cell_r;
-    ray->cell_g = args->cell_g;
-    ray->floor_b = args->floor_b;
-    ray->floor_r = args->floor_r;
-    ray->floor_g = args->floor_g;
-}
-
-int    mouse(void)
-{
-    exit(0);
-    return (0);
-}
-void	get_sizeofmap(t_ray *ray)
-{
-	int p = 0;
-	int px = 0;
-	int maxwid = 0;
-	while (ray->map[p])
-	{
-		px = ft_strlen(ray->map[p]);
-		if (px > maxwid)
-			maxwid = px;
-		p++;
-	}
-	ray->height = p * 64;
-	ray->width = maxwid * 64;
-}
-void    raycasting(t_ray *ray)
+void	raycasting(t_ray *ray)
 {
 	get_sizeofmap(ray);
 	ray->mlx = mlx_init(ray);
-	ray->mlx_win = mlx_new_window(ray->mlx,WIDTH,HEIGHT,"Cub3D");
-	get_image(ray,WIDTH,HEIGHT);
+	ray->mlx_win = mlx_new_window(ray->mlx, WIDTH, HEIGHT, "Cub3D");
+	get_image(ray, WIDTH, HEIGHT);
 	player_position(ray);
-	mlx_hook(ray->mlx_win,2,0,keyupdate2,ray);
-	mlx_hook(ray->mlx_win,3,0,keyupdate1,ray);
-	mlx_loop_hook(ray->mlx,draw,ray);
+	mlx_hook(ray->mlx_win, 2, 0, keyupdate2, ray);
+	mlx_hook(ray->mlx_win, 3, 0, keyupdate1, ray);
+	mlx_loop_hook(ray->mlx, draw, ray);
 	mlx_loop(ray->mlx);
 }
-int main(int ac, char **av)
-{
-    t_args *args;
 
-    args = malloc(sizeof(t_args));
-    args->fd = open (av[1], O_RDONLY);
-    t_ray *ray = NULL;
-    ray  = malloc(sizeof(t_ray));
-    ray->img = malloc(sizeof(t_img));
-    ray->p = malloc(sizeof(t_player));
-    ray->hit = malloc(sizeof(t_hitray));
-    if (ac == 2 && check_cub(av[1]))
-    {
-        args = get_map(args);
-        check_wall2(args);
-        exchange(ray, args);
+int	main(int ac, char **av)
+{
+	t_args	*args;
+	t_ray	*ray;
+
+	ray = NULL;
+	args = malloc(sizeof(t_args));
+	args->fd = open (av[1], O_RDONLY);
+	ray = malloc(sizeof(t_ray));
+	ray->img = malloc(sizeof(t_img));
+	ray->p = malloc(sizeof(t_player));
+	ray->hit = malloc(sizeof(t_hitray));
+	if (ac == 2 && check_cub(av[1]))
+	{
+		args = get_map(args);
+		check_wall2(args);
+		exchange(ray, args);
 		ray->map = args->copy;
 		raycasting(ray);
-    }
-    else 
-        error();
+	}
+	else
+		error();
 }
