@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 20:10:43 by himejjad          #+#    #+#             */
-/*   Updated: 2023/11/10 21:25:38 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/10 21:50:02 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	check_espa(char *args)
 	int	i;
 
 	i = 0;
-	if(!args)
+	if (!args)
 		error();
 	while (args[i])
 	{
