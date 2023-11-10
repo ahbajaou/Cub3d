@@ -6,7 +6,7 @@
 /*   By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 13:49:16 by ahbajaou          #+#    #+#             */
-/*   Updated: 2023/11/10 19:58:28 by himejjad         ###   ########.fr       */
+/*   Updated: 2023/11/10 21:30:43 by himejjad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	raycasting(t_ray *ray)
 {
 	get_sizeofmap(ray);
 	ray->mlx = mlx_init(ray);
-	ray->mlx_win = mlx_new_window(ray->mlx, WIDTH, HEIGHT, "Cub3D");
 	get_image(ray);
+	ray->mlx_win = mlx_new_window(ray->mlx, WIDTH, HEIGHT, "Cub3D");
 	player_position(ray);
 	mlx_hook(ray->mlx_win, 2, 0, keyupdate2, ray);
 	mlx_hook(ray->mlx_win, 3, 0, keyupdate1, ray);
