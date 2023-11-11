@@ -3,17 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: himejjad <himejjad@student.42.fr>          +#+  +:+       +#+         #
+#    By: ahbajaou <ahbajaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/15 07:18:20 by himejjad          #+#    #+#              #
-#    Updated: 2023/11/10 19:51:38 by himejjad         ###   ########.fr        #
+#    Updated: 2023/11/10 21:59:34 by ahbajaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-NAME = cub3D
-# CC =  
-CC = clang -g3 -Wall -Werror -Wextra   #-fsanitize=address 
+NAME = cub3D 
+CC = clang -g3 -Wall -Werror -Wextra
 SRC1 = main.c parsing.c get_map.c utls_parse.c get_next_line_utils.c get_next_line.c textures.c utls_parse_2.c  \
 		utls_parse_3.c get_sizeofmap.c hook_key.c player_position.c drawrays.c draw_mini_map.c \
 		draw3d.c update_move.c raycast_tools.c texture_tools.c utls_parse_4.c
